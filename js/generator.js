@@ -3,20 +3,31 @@
 import {toolChangeBlock,manualToolBlock} from "./rapidchange.js";
 import {findFirstXYRapid} from "./parser.js";
 
-export function buildJob(ops,s,tools){
+function localTimestamp(){
+  const d=new Date();
+  const p=n=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+
+function commentLines(text){
+  return String(text||"").split(/\r?\n/).map(x=>`(${x.replace(/[()]/g,"")})`).join("\n");
+}
+
+export function buildJob(ops,s,tools,meta={}){
   if(!ops.length) throw Error("Add at least one .nc file.");
-  if(!s.startingToolConfirmed)
-    throw Error("Confirm that MASSO has been synchronized and the selected starting tool is physically in the spindle.");
 
   const get=n=>tools.find(t=>t.number===Number(n));
   const pz=Number(s.parkZ);
-
-  if(!Number.isFinite(pz))
-    throw Error("ATC Park Z must be a valid machine-coordinate value.");
+  if(!Number.isFinite(pz)) throw Error("ATC Park Z must be a valid machine-coordinate value.");
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.5)",
+    "(Version 0.5.6)",
+    `(Generated: ${localTimestamp()} local computer time)`,
+    `(Output file: ${(meta.fileName||"combined-masso-rapidchange").replace(/[()]/g,"")}.nc)`
+  ];
+  if(meta.description) out.push("(Description:)",commentLines(meta.description));
+  out.push(
     "G17",
     "G20",
     "G80",
@@ -24,14 +35,12 @@ export function buildJob(ops,s,tools){
     "G54",
     "MSG Confirm X, Y, and Z workpiece origin is set, then press Cycle Start",
     "M0",
-    "(Starting spindle tool is determined by MASSO Sync Pocket state)"
-  ];
+    "(Before running: run the appropriate RapidChange Sync Pocket macro so MASSO knows the physical spindle tool.)"
+  );
 
-  // The GUI intentionally does not store the current spindle tool. The machine may be
-  // running this generated file days later. Sync Pocket establishes the real starting
-  // tool in MASSO immediately before the job. The first assigned operation therefore
-  // receives its RapidChange acquisition block. Subsequent consecutive operations can
-  // still be optimized because the composer knows the sequence it just generated.
+  // The GUI does not store the current spindle tool. Sync Pocket establishes the
+  // real starting tool in MASSO immediately before the job. The first assigned
+  // operation therefore gets its normal RapidChange/manual acquisition block.
   let previous=null;
 
   ops.forEach((op,i)=>{
@@ -46,17 +55,13 @@ export function buildJob(ops,s,tools){
     );
 
     if(previous!==tool){
-      out.push(
-        info.automatic
-          ? toolChangeBlock(tool,s,info)
-          : manualToolBlock(tool,s,info)
-      );
+      out.push(info.automatic?toolChangeBlock(tool,s,info):manualToolBlock(tool,s,info));
     }else{
       out.push("(Tool already in spindle - no tool change)");
     }
 
-    // Important: Easel's spindle startup and entire path remain untouched.
-    // We only pre-position X/Y at machine-safe Z before handing control to Easel.
+    // Responsibility: move to the next Easel path's first XY location while Z is
+    // at machine-safe height, without rearranging or editing Easel's own commands.
     const startXY=findFirstXYRapid(op.body);
     if(startXY){
       out.push(
@@ -74,7 +79,6 @@ export function buildJob(ops,s,tools){
       "(--- END UNCHANGED EASEL TOOLPATH ---)",
       `(===== END OPERATION ${i+1}: ${op.fileName} =====)`
     );
-
     previous=tool;
   });
 
@@ -89,12 +93,10 @@ export function buildJob(ops,s,tools){
     "M9"
   );
 
-  // The spindle is explicitly stopped before any final machine-coordinate XY travel.
   if(s.endMode==="park"){
     out.push(`G53 G90 G0 X${Number(s.parkX).toFixed(3)} Y${Number(s.parkY).toFixed(3)}`);
   }else if(s.endMode==="custom"){
-    if(!Number.isFinite(Number(s.endX))||!Number.isFinite(Number(s.endY)))
-      throw Error("Custom end X/Y must both be specified.");
+    if(!Number.isFinite(Number(s.endX))||!Number.isFinite(Number(s.endY))) throw Error("Custom end X/Y must both be specified.");
     out.push(`G53 G90 G0 X${Number(s.endX).toFixed(3)} Y${Number(s.endY).toFixed(3)}`);
   }
 

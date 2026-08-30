@@ -1,6 +1,6 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-**Current version: v0.5.5**
+**Current version: v0.5.4**
 
 A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
@@ -83,8 +83,10 @@ Before any job motion, the generated file displays a MASSO message asking the op
 At job completion the composer retracts Z, stops the spindle, and only then makes any final machine-coordinate XY move. This prevents the spindle from remaining on during final rapid transport.
 
 
-### Starting tool state
+### Job output metadata
 
-The composer no longer asks the operator to select the tool currently in the spindle. That state can be different whenever a previously generated `.nc` file is run. Before running the generated job, the operator should run the appropriate RapidChange Sync Pocket macro so MASSO knows the actual physical spindle tool. The GUI only asks the operator to confirm that synchronization has been performed.
+The composer accepts an optional output file name and brief description. The `.nc` extension is added automatically. The description is written as comments at the top of the generated file for future preview/simulation use. A generated timestamp uses the computer/browser's local date and time.
 
-The first operation is treated as a tool acquisition because the composer cannot know the physical starting tool at generation time. Subsequent operations using the same assigned tool are not interrupted by another tool-change block.
+### Operator reminders
+
+The startup screen reminds the operator to set the workpiece X/Y/Z origin and to run the appropriate RapidChange Sync Pocket macro before running the generated job. The composer does not store or ask for a specific current spindle tool.

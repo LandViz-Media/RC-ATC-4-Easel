@@ -1,3 +1,14 @@
+## v0.5.6 — Simplified startup workflow and job metadata
+
+- Fixed the v0.5.5 UI regression that prevented loaded files from being reordered and assigned tools.
+- Combined the workpiece-origin and MASSO Sync Pocket instructions into a single reminder step with no checkbox or current-spindle-tool selector.
+- Added a job output file-name field; `.nc` is appended automatically.
+- Added an optional brief job description written as comments at the top of the generated `.nc` file.
+- Added a local computer/browser timestamp to the generated `.nc` header.
+- Preserved the v0.5.4 safe final shutdown order: retract Z, stop spindle, then move to final machine-coordinate X/Y.
+- Preserved Easel path commands and RapidChange macro calls.
+- Updated the visible application version to v0.5.6.
+
 # Change Log — Easel → MASSO RapidChange ATC Job Composer
 
 ## v0.5.2 — Safe pre-positioning and MASSO operator messages
@@ -9,18 +20,6 @@
 - Continued removing only Easel's file-level `G0 X0.00000 Y0.00000` return and shutdown commands required to combine files.
 - Kept Easel spindle RPM/feed/depth values unchanged.
 - Updated application version to v0.5.2.
-
-## v0.5.5 — Simplified starting-tool state
-
-- Fixed the application header version display to v0.5.5.
-- Removed the GUI dropdown for “Tool currently in spindle.”
-- Kept the important Sync Pocket confirmation, but it is now the only starting-tool control.
-- The Sync Pocket confirmation checkbox is unchecked by default on each page load so an old browser state cannot accidentally satisfy the confirmation.
-- The generated job no longer embeds a tool number selected in the GUI as the starting spindle state.
-- The first assigned operation receives its RapidChange acquisition block; the actual physical starting tool is established by the MASSO Sync Pocket macro immediately before running the job.
-- Consecutive operations assigned to the same tool continue without an additional change.
-- Kept the v0.5.4 safe final shutdown order: retract Z, stop spindle, then final XY travel.
-- Kept the v0.5.3 machine-Z defaults and Easel path preservation.
 
 ## v0.5.4 — Startup origin confirmation and safe final shutdown
 
