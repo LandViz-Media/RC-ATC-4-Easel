@@ -1,119 +1,64 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-A browser-based utility for combining multiple single-tool Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC setup.
+**Current version: v0.4.0**
 
-## Project purpose
+A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
-Easel is convenient for creating individual toolpaths, but a multi-tool project normally requires exporting separate `.nc` files and manually loading each file on MASSO.
+Easel supplies the cutting path, spindle speed, feeds, depths, and geometry. The composer assigns each path to a MASSO tool and inserts only the machine-level transitions required to move between tools.
 
-This project provides a job-composer layer between Easel and MASSO:
+RapidChange ATC geometry and measurement logic remain in the existing MASSO macros installed by the RapidChange wizard. The web application calls those macros rather than reproducing their logic.
 
-Easel files → order operations → assign tools → manage RapidChange transitions → generate one combined `.nc` file.
+## Current workflow
 
-## Current status
+1. Run the appropriate RapidChange Sync Pocket macro on MASSO.
+2. Confirm the physical spindle tool in the application.
+3. Import Easel `.nc` files.
+4. Assign each path a MASSO tool from `config/tools.json`.
+5. Order the operations.
+6. Configure the machine-coordinate park/tool-setter positions and dust-shoe pauses.
+7. Configure the desired end position/Z.
+8. Generate one combined `.nc` file.
+9. Inspect and air-test before cutting.
 
-**Development version: v0.3.0**
+Consecutive operations using the same tool do not cause an unnecessary tool change.
 
-The project is being developed and tested against a real Onefinity Elite with MASSO and RapidChange ATC.
+## Tool configuration
 
-The application is intended to orchestrate the existing RapidChange/MASSO macros rather than duplicate the ATC logic inside generated G-code.
+`config/tools.json` is the editable tool inventory. The application reads it at startup and displays `Tool #: Name` in the operation dropdown.
 
-## RapidChange architecture
+Current tools are T1–T8 automatic RapidChange tools and T9–T10 manual/custom tools.
 
-The RapidChange wizard installs detailed ATC routines on MASSO. The composer calls those existing routines.
+## Coordinates
 
-For Tools 1–8:
+The park position and tool-setter position are **machine coordinates** and are emitted with `G53`.
 
-```text
-Tool 1 → M98 P631
-Tool 2 → M98 P632
-Tool 3 → M98 P633
-...
-Tool 8 → M98 P638
-```
+Current tool-setter position:
+- X `0.315`
+- Y `0.273`
 
-Tool measurement uses the MASSO/RapidChange mechanism already installed by the RapidChange setup.
+## Dust-shoe sequence
 
-Known tool-setter position:
+For a tool change, the intended physical sequence is:
 
-```text
-X = 0.315
-Y = 0.273
-```
+finish path → raise/park → spindle stop → pause to remove shoe → RapidChange change → measure → return to park → pause to reinstall shoe → Start → Easel's own spindle startup → next path.
 
-RapidChange recommends synchronizing MASSO's active pocket/tool state before beginning a job. The application therefore asks the operator to confirm the starting spindle tool rather than attempting direct communication with MASSO.
+The application does not impose a global spindle speed; Easel's own RPM and feed values are preserved.
 
-## Dust-shoe workflow
+## End-of-job options
 
-The current physical workflow is:
-
-1. Complete the current Easel toolpath.
-2. Raise the tool to a safe Z height.
-3. Move to the configured dust-shoe park location.
-4. Stop the spindle.
-5. Pause so the operator can remove the dust shoe.
-6. Operator presses Start on MASSO.
-7. RapidChange acquires the next tool.
-8. The tool is measured.
-9. Machine raises Z and returns to the park location.
-10. Pause so the operator can reinstall the dust shoe.
-11. Operator presses Start.
-12. Spindle starts.
-13. Next Easel toolpath runs.
-
-This keeps dust from the shoe from falling onto the carved work while the shoe is being removed.
-
-## Easel file handling
-
-Individual Easel files are treated as toolpath sources.
-
-The composer removes file-level termination so one Easel file does not terminate the entire combined job.
-
-Easel's final return:
-
-```gcode
-G0 X0.00000 Y0.00000
-```
-
-is not wanted between operations and is removed. The safe Z raise is retained.
-
-The actual cutting moves are intentionally passed through without reinterpretation at this stage.
-
-## Future development
-
-Possible future features include:
-- More robust Easel header/footer recognition.
-- Tools 9 and 10/custom manual changes.
-- Startup/current-tool synchronization assistance.
-- G-code validation.
-- 2D toolpath thumbnails.
-- Approximate visual carve previews.
-- Job summaries and warnings.
-- Additional MASSO/RapidChange configuration options.
+The job may:
+- finish at the park machine coordinates,
+- finish at custom machine X/Y,
+- leave X/Y unchanged and raise Z only,
+- optionally override the final Z height.
 
 ## Safety
 
-This project generates CNC G-code for a physical machine.
-
-**Do not assume generated G-code is safe simply because it was produced by this application.**
-
-Review generated files before running them. Air-test new versions and workflows before cutting material. Verify tool numbers, work offsets, safe Z heights, park positions, spindle speeds, feeds, and RapidChange configuration.
-
-## Repository structure
-
-```text
-RC-ATC-4-Easel/
-├── index.html
-├── README.md
-├── CHANGELOG.md
-├── css/
-├── js/
-└── examples/
-```
+This application generates CNC G-code for a physical machine. Always inspect generated files and air-test new versions before cutting. Verify tools, work offsets, machine-coordinate positions, spindle speeds, feeds, safe Z heights, and RapidChange configuration.
 
 ## Development
 
-The application is plain HTML, CSS, and JavaScript using ES modules. No build system or framework is currently required.
+Plain HTML/CSS/JavaScript using ES modules. No build system is required.
 
 For local testing:
 
@@ -121,10 +66,4 @@ For local testing:
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000/`.
-
-## Versioning
-
-Every update receives an explicit version number. The current version is displayed on `index.html` so the deployed GitHub Pages version can be verified visually.
-
-Version-specific changes are recorded in `CHANGELOG.md`.
+Every update receives an explicit version number. Version-specific changes are recorded in `CHANGELOG.md`.

@@ -1,85 +1,12 @@
-// Responsibility: Main UI controller for importing Easel files and generating the combined job.
-import { parseEaselFile, stripEaselFooter } from "./parser.js";
-import { buildJob } from "./generator.js";
-import { loadSettings, saveSettings } from "./settings.js";
-import { renderOperations } from "./ui.js";
-
-const state = { operations: [], settings: loadSettings() };
-const fileInput = document.querySelector("#fileInput");
-const list = document.querySelector("#operationList");
-const generate = document.querySelector("#generateButton");
-const status = document.querySelector("#status");
-const startingTool = document.querySelector("#startingTool");
-const startupStatus = document.querySelector("#startupStatus");
-
-startingTool.value = String(state.settings.startingTool);
-
-function updateStartupStatus() {
-  const tool = Number(startingTool.value);
-  state.settings.startingTool = tool;
-  saveSettings(state.settings);
-  startupStatus.textContent = tool === 0
-    ? "Starting state: spindle is empty. The first operation will require a tool change."
-    : `Starting state: Tool ${tool} is confirmed in the spindle. If the first operation uses Tool ${tool}, no initial tool change will be generated.`;
-}
-startingTool.addEventListener("change", updateStartupStatus);
-
-function refresh() {
-  renderOperations(list, state.operations, {
-    onChange: (i, p) => { Object.assign(state.operations[i], p); refresh(); },
-    onRemove: i => { state.operations.splice(i, 1); refresh(); },
-    onMove: (i, d) => {
-      const j = i + d;
-      if (j < 0 || j >= state.operations.length) return;
-      [state.operations[i], state.operations[j]] = [state.operations[j], state.operations[i]];
-      refresh();
-    }
-  });
-  generate.disabled = !state.operations.length;
-}
-
-fileInput.addEventListener("change", async e => {
-  for (const file of e.target.files) {
-    const source = await file.text();
-    const parsed = parseEaselFile(source);
-    state.operations.push({
-      fileName: file.name,
-      source,
-      body: stripEaselFooter(parsed.body),
-      tool: 1,
-      description: parsed.toolDescription || ""
-    });
-  }
-  status.textContent = `Loaded ${state.operations.length} operation(s).`;
-  refresh();
-  e.target.value = "";
-});
-
-for (const id of ["parkX","parkY","parkZ","setterX","setterY","dustShoeEnabled"]) {
-  const el = document.querySelector("#" + id);
-  el.value = state.settings[id];
-  el.addEventListener("change", () => {
-    state.settings[id] = el.type === "checkbox" ? el.checked : Number(el.value);
-    saveSettings(state.settings);
-  });
-}
-
-generate.addEventListener("click", () => {
-  try {
-    const job = buildJob(state.operations, state.settings);
-    const blob = new Blob([job], {type:"text/plain"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "combined-masso-rapidchange.nc";
-    a.click();
-    URL.revokeObjectURL(url);
-    status.textContent = "Combined G-code generated.";
-  } catch (err) {
-    console.error(err);
-    status.textContent = `ERROR: ${err.message}`;
-  }
-});
-
-updateStartupStatus();
-refresh();
+// Responsibility: Load configuration, manage the UI, import Easel files, and generate the combined job.
+import {parseEaselFile,stripEaselFooter} from "./parser.js"; import {buildJob} from "./generator.js"; import {loadSettings,saveSettings} from "./settings.js"; import {renderOperations} from "./ui.js";
+const S={operations:[],settings:loadSettings(),tools:[]},$=s=>document.querySelector(s),file=$("#fileInput"),list=$("#operationList"),gen=$("#generateButton"),status=$("#status"),start=$("#startingTool"),confirm=$("#startingToolConfirmed");
+async function loadTools(){const r=await fetch("./config/tools.json",{cache:"no-store"});if(!r.ok)throw Error(`Unable to load config/tools.json (${r.status}).`);S.tools=(await r.json()).tools;if(!S.tools?.length)throw Error("No tools found.");start.innerHTML='<option value="0">Empty spindle</option>'+S.tools.map(t=>`<option value="${t.number}">Tool ${t.number}: ${t.name}</option>`).join("");start.value=S.settings.startingTool;confirm.checked=!!S.settings.startingToolConfirmed;update()}
+function update(){S.settings.startingTool=Number(start.value);S.settings.startingToolConfirmed=confirm.checked;saveSettings(S.settings);$("#startupStatus").textContent=confirm.checked?`Confirmed: ${start.options[start.selectedIndex].text}.`:"Run the matching Sync Pocket macro on MASSO and confirm the physical spindle tool.";refresh()}
+start.onchange=update;confirm.onchange=update;
+function refresh(){renderOperations(list,S.operations,S.tools,{onChange:(i,p)=>{Object.assign(S.operations[i],p);refresh()},onRemove:i=>{S.operations.splice(i,1);refresh()},onMove:(i,d)=>{const j=i+d;if(j<0||j>=S.operations.length)return;[S.operations[i],S.operations[j]]=[S.operations[j],S.operations[i]];refresh()}});gen.disabled=!S.operations.length||!confirm.checked}
+file.onchange=async e=>{for(const f of e.target.files){const text=await f.text();S.operations.push({fileName:f.name,body:stripEaselFooter(parseEaselFile(text).body),tool:1})}status.textContent=`Loaded ${S.operations.length} operation(s). Assign each operation a MASSO tool.`;refresh();e.target.value=""};
+["parkX","parkY","parkZ","setterX","setterY","dustShoeEnabled","endMode","endX","endY","endZOverrideEnabled","endZ"].forEach(id=>{const e=$("#"+id);e.value=S.settings[id];if(e.type==="checkbox")e.checked=!!S.settings[id];e.onchange=()=>{S.settings[id]=e.type==="checkbox"?e.checked:(e.type==="number"?Number(e.value):e.value);saveSettings(S.settings);toggleEnd()}});
+function toggleEnd(){$("#customEnd").classList.toggle("hidden",$("#endMode").value!=="custom");$("#endZWrap").classList.toggle("hidden",!$("#endZOverrideEnabled").checked)}toggleEnd();
+gen.onclick=()=>{try{const g=buildJob(S.operations,S.settings,S.tools),u=URL.createObjectURL(new Blob([g],{type:"text/plain"})),a=document.createElement("a");a.href=u;a.download="combined-masso-rapidchange.nc";a.click();URL.revokeObjectURL(u);status.textContent="Combined G-code generated."}catch(e){status.textContent=`ERROR: ${e.message}`}};
+loadTools().catch(e=>status.textContent=`ERROR: ${e.message}`);refresh();

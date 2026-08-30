@@ -1,63 +1,38 @@
 # Change Log — Easel → MASSO RapidChange ATC Job Composer
 
-## v0.1.0 — Initial project
+## v0.4.0 — Tool configuration and job-state workflow
 
-Created the initial JavaScript/GitHub Pages project for combining individual Easel `.nc` files into a single MASSO/RapidChange ATC job.
-
-Initial structure:
-- `index.html`
-- `README.md`
-- `css/styles.css`
-- `js/app.js`
-- `js/generator.js`
-- `js/parser.js`
-- `js/rapidchange.js`
-- `js/settings.js`
-- `js/ui.js`
-- `test-files/outline.nc`
-- `test-files/box.nc`
-- `test-files/vCarve.nc`
-
-Initial capabilities:
-- Import multiple Easel `.nc` files.
-- Reorder operations.
-- Assign RapidChange Tools 1–8.
-- Combine operations into one `.nc` file.
-- Remove individual `M30` endings.
-- Add optional dust-shoe parking pauses.
-- Use the RapidChange `M98 P63x` convention.
-
-## v0.2.0 — RapidChange measurement sequence
-
-Updated tool-change handling based on the known-good MASSO/Onefinity RapidChange test.
-
-Tool mapping:
-- T1 → `M98 P631` → `T1 M6`
-- T2 → `M98 P632` → `T2 M6`
-- T3 → `M98 P633` → `T3 M6`
-- T4 → `M98 P634` → `T4 M6`
-- T5 → `M98 P635` → `T5 M6`
-- T6 → `M98 P636` → `T6 M6`
-- T7 → `M98 P637` → `T7 M6`
-- T8 → `M98 P638` → `T8 M6`
-
-The composer calls the existing RapidChange/MASSO routines rather than embedding the ATC routines into the generated cut file.
+- Added editable `config/tools.json`.
+- Tool dropdowns now read from the JSON inventory and display `Tool #: Name`.
+- Added the current T1–T10 tool assignments.
+- Added starting-tool confirmation tied to the operator's RapidChange Sync Pocket workflow.
+- Track current tool across operations and skip changes when consecutive paths use the same tool.
+- Automatic T1–T8 operations call existing `M98 P63x` RapidChange macros.
+- T9/T10 are represented as manual/custom tools.
+- Preserved Easel spindle RPM/feed/cutting values rather than imposing a global spindle speed.
+- Refined dust-shoe park/remove/change/measure/park/install sequence.
+- Added end-of-job park/custom/X-Y-unchanged options and end-Z override.
+- Park and tool-setter coordinates are explicitly treated as machine coordinates.
+- Displayed v0.4.0 on the application interface.
 
 ## v0.3.0 — Job sequencing and dust-shoe workflow
 
-Added:
-- Visible application version number.
-- Starting spindle-tool selection.
-- Skip the first tool change when the selected starting tool matches the first operation.
-- Tool setter position: X `0.315`, Y `0.273`.
-- Dust-shoe sequence: finish → raise Z → park → pause/remove shoe → RapidChange → measure → raise Z → park → pause/install shoe → spindle start → continue.
-- Removal of Easel's final `G0 X0.00000 Y0.00000` return from the operation shutdown sequence.
-- Retention of the final safe Z raise.
-- Removal of Easel trailing `G4`/`M5` shutdown commands so the composer controls transitions.
-- RapidChange logic remains on MASSO; the generated job calls the existing macros.
+- Added visible application version.
+- Added starting spindle-tool selection.
+- Added skip-first-change behavior when the starting tool matches the first operation.
+- Added tool-setter X `0.315`, Y `0.273`.
+- Added dust-shoe transition workflow.
+- Removed Easel's final `G0 X0.00000 Y0.00000` return from operation shutdown.
+- Retained the safe Z raise.
+- Removed Easel trailing `G4`/`M5` shutdown commands so the composer controls transitions.
+- Kept RapidChange logic on MASSO.
 
-Known limitations:
-- MASSO's current tool state is not read directly by the browser. The operator runs the RapidChange Sync Pocket routine and confirms the starting tool.
-- Tools 9 and 10 remain custom/manual and are not yet automated.
-- G-code thumbnails/previews are not yet implemented.
-- Generated G-code must be reviewed and air-tested before cutting.
+## v0.2.0 — RapidChange measurement sequence
+
+- Added known-good RapidChange/MASSO tool-change pattern.
+- T1–T8 mapped to `M98 P631` through `M98 P638` with corresponding `T# M6`.
+
+## v0.1.0 — Initial project
+
+- Created the initial HTML/CSS/JavaScript GitHub Pages application.
+- Added multi-file import, ordering, tool assignment, combination, and basic RapidChange orchestration.

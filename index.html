@@ -1,66 +1,7 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Easel → MASSO RapidChange ATC Job Composer v0.3.0</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-<main class="app">
-  <header>
-    <div class="version">v0.3.0</div>
-    <h1>Easel → MASSO RapidChange ATC Job Composer</h1>
-    <p>Combine single-tool Easel G-code files into one RapidChange-aware MASSO job.</p>
-  </header>
-
-  <section class="panel">
-    <h2>1. Starting machine state</h2>
-    <p class="hint">Run the appropriate RapidChange Sync Pocket macro on MASSO before running the project, then confirm the tool currently in the spindle.</p>
-    <label>Tool currently in spindle
-      <select id="startingTool">
-        <option value="0">Empty spindle</option>
-        <option value="1">Tool 1</option><option value="2">Tool 2</option>
-        <option value="3">Tool 3</option><option value="4">Tool 4</option>
-        <option value="5">Tool 5</option><option value="6">Tool 6</option>
-        <option value="7">Tool 7</option><option value="8">Tool 8</option>
-        <option value="9">Tool 9 (custom/manual)</option><option value="10">Tool 10 (custom/manual)</option>
-      </select>
-    </label>
-    <p id="startupStatus" class="status-note">The selected starting tool will be used to determine whether the first operation requires a tool change.</p>
-  </section>
-
-  <section class="panel">
-    <h2>2. Add Easel G-code files</h2>
-    <input id="fileInput" type="file" accept=".nc,.gcode,.txt" multiple>
-    <p class="hint">Add the individual .nc files exported by Easel.</p>
-  </section>
-
-  <section class="panel">
-    <h2>3. Job operations</h2>
-    <div id="operationList"><p class="empty">No files added yet.</p></div>
-  </section>
-
-  <section class="panel">
-    <h2>4. Machine settings</h2>
-    <div class="settings-grid">
-      <label>Park X <input id="parkX" type="number" step=".001"></label>
-      <label>Park Y <input id="parkY" type="number" step=".001"></label>
-      <label>Park Z <input id="parkZ" type="number" step=".001"></label>
-      <label>Tool setter X <input id="setterX" type="number" step=".001"></label>
-      <label>Tool setter Y <input id="setterY" type="number" step=".001"></label>
-    </div>
-    <label class="checkbox"><input id="dustShoeEnabled" type="checkbox">
-      Pause for dust-shoe removal/reinstallation
-    </label>
-  </section>
-
-  <section class="panel">
-    <h2>5. Build</h2>
-    <button id="generateButton" disabled>Generate Combined .nc</button>
-    <pre id="status"></pre>
-  </section>
-</main>
-<script type="module" src="js/app.js"></script>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Easel → MASSO RapidChange ATC Job Composer v0.4.0</title><link rel="stylesheet" href="css/styles.css"></head><body><main class="app"><header><div class="version">v0.4.0</div><h1>Easel → MASSO RapidChange ATC Job Composer</h1><p>Combine single-tool Easel G-code files into one ordered RapidChange-aware MASSO job.</p></header>
+<section class="panel"><h2>1. Starting machine state</h2><p class="hint"><strong>Before running:</strong> run the appropriate RapidChange Sync Pocket macro on MASSO so MASSO knows which tool is physically in the spindle.</p><label>Tool currently in spindle<select id="startingTool"></select></label><label class="checkbox"><input id="startingToolConfirmed" type="checkbox"> I have run the appropriate Sync Pocket macro and confirmed this is the tool physically in the spindle.</label><p id="startupStatus" class="status-note"></p></section>
+<section class="panel"><h2>2. Add Easel G-code files</h2><input id="fileInput" type="file" accept=".nc,.gcode,.txt" multiple><p class="hint">Easel does not identify the physical MASSO tool, so assign one below.</p></section>
+<section class="panel"><h2>3. Job operations</h2><div id="operationList"><p class="empty">No files added yet.</p></div></section>
+<section class="panel"><h2>4. Machine settings</h2><div class="settings-grid"><label>Park X (machine)<input id="parkX" type="number" step=".001"></label><label>Park Y (machine)<input id="parkY" type="number" step=".001"></label><label>Park Z (machine)<input id="parkZ" type="number" step=".001"></label><label>Tool setter X (machine)<input id="setterX" type="number" step=".001"></label><label>Tool setter Y (machine)<input id="setterY" type="number" step=".001"></label></div><label class="checkbox"><input id="dustShoeEnabled" type="checkbox"> Pause for dust-shoe removal/reinstallation</label></section>
+<section class="panel"><h2>5. End-of-job settings</h2><label>End location<select id="endMode"><option value="park">Use park location</option><option value="custom">Override with machine coordinates</option><option value="zonly">Leave X/Y unchanged — raise Z only</option></select></label><div id="customEnd" class="settings-grid hidden"><label>End X (machine)<input id="endX" type="number" step=".001"></label><label>End Y (machine)<input id="endY" type="number" step=".001"></label></div><label class="checkbox"><input id="endZOverrideEnabled" type="checkbox"> Override end Z height</label><label id="endZWrap" class="hidden">End Z (machine)<input id="endZ" type="number" step=".001"></label></section>
+<section class="panel"><h2>6. Build</h2><button id="generateButton" disabled>Generate Combined .nc</button><pre id="status"></pre></section></main><script type="module" src="js/app.js"></script></body></html>

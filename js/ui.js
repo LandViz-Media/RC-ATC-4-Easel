@@ -1,18 +1,2 @@
-// Responsibility: Render the ordered operation list and editing controls.
-export function renderOperations(container,ops,h){
-  container.innerHTML="";
-  if(!ops.length){container.innerHTML='<p class="empty">No files added yet.</p>';return}
-  ops.forEach((op,i)=>{
-    const row=document.createElement("div");row.className="operation";
-    const name=document.createElement("strong");name.textContent=`${i+1}. ${op.fileName}`;
-    const tool=document.createElement("select");
-    for(let t=1;t<=8;t++){const o=document.createElement("option");o.value=t;o.textContent=`Tool ${t}`;o.selected=Number(op.tool)===t;tool.appendChild(o)}
-    tool.addEventListener("change",()=>h.onChange(i,{tool:Number(tool.value)}));
-    const actions=document.createElement("span");actions.className="operation-actions";
-    for(const [txt,title,d] of [["↑","Move up",-1],["↓","Move down",1]]){
-      const b=document.createElement("button");b.textContent=txt;b.title=title;b.onclick=()=>h.onMove(i,d);actions.appendChild(b)
-    }
-    const rem=document.createElement("button");rem.textContent="×";rem.title="Remove";rem.onclick=()=>h.onRemove(i);actions.appendChild(rem);
-    row.append(name,tool,actions);container.appendChild(row);
-  });
-}
+// Responsibility: Render the ordered operation list and tool assignment controls.
+export function renderOperations(c,ops,tools,h){c.innerHTML="";if(!ops.length){c.innerHTML='<p class="empty">No files added yet.</p>';return}ops.forEach((op,i)=>{const r=document.createElement("div");r.className="operation";const n=document.createElement("strong");n.textContent=`${i+1}. ${op.fileName}`;const s=document.createElement("select");tools.forEach(t=>{const o=document.createElement("option");o.value=t.number;o.textContent=`Tool ${t.number}: ${t.name}`;o.selected=Number(op.tool)===t.number;s.appendChild(o)});s.onchange=()=>h.onChange(i,{tool:Number(s.value)});const a=document.createElement("span");a.className="operation-actions";[["↑",-1],["↓",1]].forEach(([x,d])=>{const b=document.createElement("button");b.textContent=x;b.onclick=()=>h.onMove(i,d);a.appendChild(b)});const b=document.createElement("button");b.textContent="×";b.onclick=()=>h.onRemove(i);a.appendChild(b);r.append(n,s,a);c.appendChild(r)})}
