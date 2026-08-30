@@ -9,7 +9,6 @@ export function buildJob(ops,s,tools){
     throw Error("Confirm that MASSO has been synchronized and the selected starting tool is physically in the spindle.");
 
   const get=n=>tools.find(t=>t.number===Number(n));
-  const start=Number(s.startingTool);
   const pz=Number(s.parkZ);
 
   if(!Number.isFinite(pz))
@@ -17,7 +16,7 @@ export function buildJob(ops,s,tools){
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.4)",
+    "(Version 0.5.5)",
     "G17",
     "G20",
     "G80",
@@ -25,10 +24,15 @@ export function buildJob(ops,s,tools){
     "G54",
     "MSG Confirm X, Y, and Z workpiece origin is set, then press Cycle Start",
     "M0",
-    `(Starting spindle tool: ${start===0?"Empty":`Tool ${start}`})`
+    "(Starting spindle tool is determined by MASSO Sync Pocket state)"
   ];
 
-  let previous=start;
+  // The GUI intentionally does not store the current spindle tool. The machine may be
+  // running this generated file days later. Sync Pocket establishes the real starting
+  // tool in MASSO immediately before the job. The first assigned operation therefore
+  // receives its RapidChange acquisition block. Subsequent consecutive operations can
+  // still be optimized because the composer knows the sequence it just generated.
+  let previous=null;
 
   ops.forEach((op,i)=>{
     const tool=Number(op.tool);

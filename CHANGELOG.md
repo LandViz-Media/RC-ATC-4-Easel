@@ -10,6 +10,18 @@
 - Kept Easel spindle RPM/feed/depth values unchanged.
 - Updated application version to v0.5.2.
 
+## v0.5.5 — Simplified starting-tool state
+
+- Fixed the application header version display to v0.5.5.
+- Removed the GUI dropdown for “Tool currently in spindle.”
+- Kept the important Sync Pocket confirmation, but it is now the only starting-tool control.
+- The Sync Pocket confirmation checkbox is unchecked by default on each page load so an old browser state cannot accidentally satisfy the confirmation.
+- The generated job no longer embeds a tool number selected in the GUI as the starting spindle state.
+- The first assigned operation receives its RapidChange acquisition block; the actual physical starting tool is established by the MASSO Sync Pocket macro immediately before running the job.
+- Consecutive operations assigned to the same tool continue without an additional change.
+- Kept the v0.5.4 safe final shutdown order: retract Z, stop spindle, then final XY travel.
+- Kept the v0.5.3 machine-Z defaults and Easel path preservation.
+
 ## v0.5.4 — Startup origin confirmation and safe final shutdown
 
 - Added an initial MASSO `MSG` prompt requiring confirmation that the workpiece X/Y/Z origin has been set before job motion begins.
