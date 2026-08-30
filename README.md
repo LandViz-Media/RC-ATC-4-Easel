@@ -1,6 +1,6 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-**Current version: v0.5.0**
+**Current version: v0.5.2**
 
 A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
