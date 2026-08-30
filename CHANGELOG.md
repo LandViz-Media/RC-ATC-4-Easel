@@ -1,5 +1,15 @@
 # Change Log — Easel → MASSO RapidChange ATC Job Composer
 
+## v0.5.0 — Safe work-area entry after dust-shoe installation
+
+- Defaulted ATC Park Z to machine Z `0.000`.
+- Clarified that ATC park X/Y/Z are machine coordinates.
+- When Easel exports an initial Z move before its initial XY positioning move, the composer moves that exact Easel XY rapid ahead of the initial Z move.
+- This keeps the initial vertical move over the work area rather than potentially crossing tall hold-downs or cutting into a bowl while traveling from the park location.
+- Preserved Easel RPM, feed, depth, and cutting commands.
+- Kept RapidChange macro geometry and measurement logic on MASSO.
+- Updated interface/version to v0.5.0.
+
 ## v0.4.0 — Tool configuration and job-state workflow
 
 - Added editable `config/tools.json`.

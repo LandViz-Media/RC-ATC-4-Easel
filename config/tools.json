@@ -1,74 +1,14 @@
 {
   "tools": [
-    {
-      "number": 1,
-      "shaftDiameter": 0.25,
-      "name": "1/4 Up Cut",
-      "type": "Up Cut",
-      "automatic": true
-    },
-    {
-      "number": 2,
-      "shaftDiameter": 0.25,
-      "name": "1/4 Down Cut",
-      "type": "Down Cut",
-      "automatic": true
-    },
-    {
-      "number": 3,
-      "shaftDiameter": 0.25,
-      "name": "1/4 Compression",
-      "type": "Compression",
-      "automatic": true
-    },
-    {
-      "number": 4,
-      "shaftDiameter": 0.25,
-      "name": "1/4 Ballnose",
-      "type": "Ballnose",
-      "automatic": true
-    },
-    {
-      "number": 5,
-      "shaftDiameter": 0.25,
-      "name": "1/4 30 V-bit",
-      "type": "V-bit",
-      "automatic": true
-    },
-    {
-      "number": 6,
-      "shaftDiameter": 0.125,
-      "name": "1/8 Compression (short)",
-      "type": "Compression",
-      "automatic": true
-    },
-    {
-      "number": 7,
-      "shaftDiameter": 0.125,
-      "name": "1/16 Up Cut (short)",
-      "type": "Up Cut",
-      "automatic": true
-    },
-    {
-      "number": 8,
-      "shaftDiameter": 0.5,
-      "name": "1/2 Ballnose",
-      "type": "Ballnose",
-      "automatic": true
-    },
-    {
-      "number": 9,
-      "shaftDiameter": null,
-      "name": "Manual tool 1",
-      "type": "Manual",
-      "automatic": false
-    },
-    {
-      "number": 10,
-      "shaftDiameter": null,
-      "name": "Manual tool 2",
-      "type": "Manual",
-      "automatic": false
-    }
+    {"number":1,"shaftDiameter":0.25,"name":"1/4 Up Cut","type":"Up Cut","automatic":true},
+    {"number":2,"shaftDiameter":0.25,"name":"1/4 Down Cut","type":"Down Cut","automatic":true},
+    {"number":3,"shaftDiameter":0.25,"name":"1/4 Compression","type":"Compression","automatic":true},
+    {"number":4,"shaftDiameter":0.25,"name":"1/4 Ballnose","type":"Ballnose","automatic":true},
+    {"number":5,"shaftDiameter":0.25,"name":"1/4 30 V-bit","type":"V-bit","automatic":true},
+    {"number":6,"shaftDiameter":0.125,"name":"1/8 Compression (short)","type":"Compression","automatic":true},
+    {"number":7,"shaftDiameter":0.125,"name":"1/16 Up Cut (short)","type":"Up Cut","automatic":true},
+    {"number":8,"shaftDiameter":0.5,"name":"1/2 Ballnose","type":"Ballnose","automatic":true},
+    {"number":9,"shaftDiameter":null,"name":"Manual tool 1","type":"Manual","automatic":false},
+    {"number":10,"shaftDiameter":null,"name":"Manual tool 2","type":"Manual","automatic":false}
   ]
 }
