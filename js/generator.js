@@ -17,12 +17,14 @@ export function buildJob(ops,s,tools){
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.2)",
+    "(Version 0.5.4)",
     "G17",
     "G20",
     "G80",
     "G90",
     "G54",
+    "MSG Confirm X, Y, and Z workpiece origin is set, then press Cycle Start",
+    "M0",
     `(Starting spindle tool: ${start===0?"Empty":`Tool ${start}`})`
   ];
 
@@ -78,9 +80,12 @@ export function buildJob(ops,s,tools){
   out.push(
     "",
     "(===== JOB END =====)",
-    `G53 G90 G0 Z${z.toFixed(3)}`
+    `G53 G90 G0 Z${z.toFixed(3)}`,
+    "M5",
+    "M9"
   );
 
+  // The spindle is explicitly stopped before any final machine-coordinate XY travel.
   if(s.endMode==="park"){
     out.push(`G53 G90 G0 X${Number(s.parkX).toFixed(3)} Y${Number(s.parkY).toFixed(3)}`);
   }else if(s.endMode==="custom"){
@@ -89,6 +94,6 @@ export function buildJob(ops,s,tools){
     out.push(`G53 G90 G0 X${Number(s.endX).toFixed(3)} Y${Number(s.endY).toFixed(3)}`);
   }
 
-  out.push("M5","M9","M30");
+  out.push("M30");
   return out.join("\n")+"\n";
 }

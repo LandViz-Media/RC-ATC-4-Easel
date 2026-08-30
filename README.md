@@ -1,6 +1,6 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-**Current version: v0.5.2**
+**Current version: v0.5.4**
 
 A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
@@ -67,3 +67,17 @@ python3 -m http.server 8000
 ```
 
 Every update receives an explicit version number. Version-specific changes are recorded in `CHANGELOG.md`.
+
+
+### Easel safety height
+
+Easel's own Safety Height / Origin Safety Height settings remain the responsibility of Easel. The composer does not replace or rewrite those values. Easel's operation code, including its normal `G0 Z...` retracts, is preserved when the files are combined.
+
+
+### Startup confirmation
+
+Before any job motion, the generated file displays a MASSO message asking the operator to confirm that the X, Y, and Z workpiece origin has been set.
+
+### Final shutdown sequence
+
+At job completion the composer retracts Z, stops the spindle, and only then makes any final machine-coordinate XY move. This prevents the spindle from remaining on during final rapid transport.

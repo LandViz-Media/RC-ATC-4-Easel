@@ -10,6 +10,25 @@
 - Kept Easel spindle RPM/feed/depth values unchanged.
 - Updated application version to v0.5.2.
 
+## v0.5.4 — Startup origin confirmation and safe final shutdown
+
+- Added an initial MASSO `MSG` prompt requiring confirmation that the workpiece X/Y/Z origin has been set before job motion begins.
+- Changed the absolute end-of-job sequence so Z retracts first, then `M5`/`M9` stop the spindle, and only afterward does any final machine-coordinate X/Y travel.
+- Preserved the existing v0.5.3 machine-coordinate Park Z defaults and UI notes.
+- Preserved Easel's own path commands and Z retracts.
+- No change to RapidChange macro calls or tool measurement logic.
+- Updated application version to v0.5.4.
+
+## v0.5.3 — Machine Z defaults and coordinate documentation
+
+- Fixed the UI/default mismatch so ATC Park Z defaults to machine Z `0.000`.
+- Fixed the end-Z override default to machine Z `0.000`.
+- Added UI notes explaining that `0.000` is the top of Z travel and more-negative machine Z values are possible.
+- Clarified that Easel's Safety Height and Origin Safety Height remain controlled by Easel.
+- Preserved Easel's own Z retracts and cutting commands unchanged.
+- No change to the v0.5.2 safe pre-positioning logic or RapidChange macro calls.
+- Updated application version to v0.5.3.
+
 ## v0.4.0 — Tool configuration and job-state workflow
 
 - Added editable `config/tools.json`.
