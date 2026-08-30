@@ -1,49 +1,29 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-Initial JavaScript prototype for combining single-tool Easel `.nc` files into one multi-operation MASSO job.
+Initial prototype for combining single-tool Easel `.nc` files into one multi-operation MASSO job.
 
-## Initial goals
+## Confirmed RapidChange sequence
 
-- Import multiple Easel `.nc` files.
-- Order operations.
-- Assign RapidChange Tools 1–8.
-- Use the RapidChange subroutine convention from `Masso_RC_ATC_inch.con`:
-  - Tool 1 → `M98 P631`
-  - Tool 2 → `M98 P632`
-  - ...
-  - Tool 8 → `M98 P638`
-- Remove Easel's final program-ending section.
-- Insert operator pauses for removal/reinstallation of the dust shoe.
-- Export one `.nc` file.
+Based on the known-good Onefinity/MASSO/RapidChange test:
 
-## Important
-
-This is an **initial test version**, not yet a production-ready CNC post processor.
-
-Do not run generated G-code on the machine until it has been reviewed and air-tested.
-
-## Test files
-
-The three uploaded Easel examples are included in `test-files/`:
-
-- `outline.nc`
-- `box.nc`
-- `vCarve.nc`
-
-## Run locally
-
-Because this uses ES modules, serve the folder from a local web server rather than opening `index.html` directly.
-
-For example:
-
-```bash
-python3 -m http.server 8000
+```gcode
+M98 P633
+G53 G90 G0 Z-0.010
+G53 G90 G0 X0.315 Y0.273
+T3 M6
 ```
 
-Then open:
+Tools 1–8 map to `M98 P631` through `M98 P638`, followed by the corresponding `Tn M6`.
 
-http://localhost:8000/
+## Current behavior
 
-## Next development step
+- Import multiple Easel `.nc` files.
+- Reorder operations.
+- Assign RapidChange Tools 1–8.
+- Remove each file's M30.
+- Remove Easel's final X0/Y0 return when it is the final motion.
+- Insert RapidChange acquisition and measurement.
+- Optional dust-shoe removal/reinstallation pauses.
+- Export one combined `.nc`.
 
-Inspect the three actual Easel files and refine `parser.js` so the exact Easel header/footer structure is handled safely. Then test a three-operation generated file before adding more advanced MASSO/RapidChange logic.
+Review and air-test generated G-code before cutting material.

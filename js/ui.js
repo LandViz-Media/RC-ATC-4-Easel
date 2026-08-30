@@ -1,49 +1,7 @@
-// Responsibility: Render and manage the ordered operation list.
-
-export function renderOperations(container, operations, handlers) {
-  container.innerHTML = "";
-
-  if (!operations.length) {
-    container.innerHTML = '<p class="empty">No files added yet.</p>';
-    return;
-  }
-
-  operations.forEach((operation, index) => {
-    const row = document.createElement("div");
-    row.className = "operation";
-
-    const name = document.createElement("strong");
-    name.textContent = `${index + 1}. ${operation.fileName}`;
-
-    const tool = document.createElement("select");
-    for (let t = 1; t <= 8; t++) {
-      const option = document.createElement("option");
-      option.value = t;
-      option.textContent = `Tool ${t}`;
-      option.selected = Number(operation.tool) === t;
-      tool.appendChild(option);
-    }
-    tool.addEventListener("change", () => handlers.onChange(index, { tool: Number(tool.value) }));
-
-    const up = document.createElement("button");
-    up.textContent = "↑";
-    up.title = "Move up";
-    up.addEventListener("click", () => handlers.onMove(index, -1));
-
-    const down = document.createElement("button");
-    down.textContent = "↓";
-    down.title = "Move down";
-    down.addEventListener("click", () => handlers.onMove(index, 1));
-
-    const remove = document.createElement("button");
-    remove.textContent = "×";
-    remove.title = "Remove";
-    remove.addEventListener("click", () => handlers.onRemove(index));
-
-    const controls = document.createElement("span");
-    controls.append(up, down, remove);
-
-    row.append(name, tool, controls);
-    container.appendChild(row);
-  });
-}
+// Responsibility: Render the ordered operation list and controls.
+export function renderOperations(container,ops,h){container.innerHTML="";if(!ops.length){container.innerHTML='<p class="empty">No files added yet.</p>';return}
+ops.forEach((op,i)=>{const row=document.createElement("div");row.className="operation";const name=document.createElement("strong");name.textContent=`${i+1}. ${op.fileName}`;
+const tool=document.createElement("select");for(let t=1;t<=8;t++){const o=document.createElement("option");o.value=t;o.textContent=`Tool ${t}`;o.selected=Number(op.tool)===t;tool.appendChild(o)}
+tool.addEventListener("change",()=>h.onChange(i,{tool:Number(tool.value)}));const actions=document.createElement("span");actions.className="operation-actions";
+for(const [txt,title,d] of [["↑","Move up",-1],["↓","Move down",1]]){const b=document.createElement("button");b.textContent=txt;b.title=title;b.onclick=()=>h.onMove(i,d);actions.appendChild(b)}
+const rem=document.createElement("button");rem.textContent="×";rem.title="Remove";rem.onclick=()=>h.onRemove(i);actions.appendChild(rem);row.append(name,tool,actions);container.appendChild(row)})}
