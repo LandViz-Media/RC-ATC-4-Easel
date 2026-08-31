@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RC-ATC for Easel — Preview UI Prototype v0.3.1</title>
+<title>RC-ATC for Easel — Preview UI Prototype v0.3.2</title>
 <link rel="stylesheet" href="css.css">
 </head>
 <body>
 <main>
 <header>
 <h1>RC-ATC for Easel — Preview UI Prototype</h1>
-<div class="version">v0.3.1 — UI prototype; G-code generation not included</div>
+<div class="version">v0.3.2 — UI prototype; G-code generation not included</div>
 <p>Compact operation thumbnails with optional detailed and combined previews.</p>
 </header>
 <section class="panel">
@@ -22,8 +22,9 @@
 </section>
 <section class="panel">
 <div class="preview-controls">
-<label><input id="showDetailed" type="checkbox"> Show detailed preview</label>
-<label><input id="showCombined" type="checkbox"> Show combined project preview</label>
+<label><input type="radio" name="previewMode" value="none" checked> No detail preview</label>
+<label><input type="radio" name="previewMode" value="detailed"> Show detailed preview</label>
+<label><input type="radio" name="previewMode" value="combined"> Show combined project preview</label>
 </div>
 <div id="detailedSection" class="preview-section hidden">
 <div class="preview-header"><div><h2>Detailed Preview</h2><div class="meta">Select an operation to view its larger toolpath.</div></div></div>
@@ -49,6 +50,6 @@
 </div>
 </section>
 </main>
-<script src="parser.js?v=0.3.1"></script><script src="renderer.js?v=0.3.1"></script><script src="app.js?v=0.3.1"></script>
+<script src="parser.js?v=0.3.2"></script><script src="renderer.js?v=0.3.2"></script><script src="app.js?v=0.3.2"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// RC-ATC Preview UI v0.3.1
+// RC-ATC Preview UI v0.3.2
 // Responsibility: Manage operation files, tool assignment, ordering, hover details,
 // and optional detailed/combined previews. This prototype does not generate G-code.
 
@@ -222,14 +222,14 @@ function renderDetailChooser(){
 
 function renderDetailed(){
   if(currentPreviewMode()!=="detailed") return;
-  detailSection.classList.remove("hidden");
 
   if(selectedDetail<0 || !operations[selectedDetail]){
+    const ctx=detailCanvas.getContext("2d");
+    ctx.clearRect(0,0,detailCanvas.width,detailCanvas.height);
     return;
   }
 
   const op=operations[selectedDetail];
-
   NCPreviewRenderer.render(detailCanvas,op.parsed,{
     showRapid:document.querySelector("#detailRapid").checked,
     showStart:document.querySelector("#detailStart").checked,
@@ -240,14 +240,12 @@ function renderDetailed(){
 
 function renderCombined(){
   if(currentPreviewMode()!=="combined") return;
-  combinedSection.classList.remove("hidden");
 
   const used=[...new Set(
     operations.map(o=>o.tool).filter(t=>Number.isInteger(t))
   )].sort((a,b)=>a-b);
 
-  // Preserve existing visibility choices, but automatically add newly
-  // assigned tools as visible the first time they appear.
+  // Preserve visibility choices. Newly assigned tools become visible.
   used.forEach(t=>{
     if(!visibleTools.has(t)) visibleTools.add(t);
   });
@@ -299,11 +297,12 @@ function currentPreviewMode(){
 
 function updatePreviewMode(){
   const mode=currentPreviewMode();
+
   detailSection.classList.toggle("hidden",mode!=="detailed");
   combinedSection.classList.toggle("hidden",mode!=="combined");
 
   if(mode==="detailed") renderDetailed();
-  else if(mode==="combined") renderCombined();
+  if(mode==="combined") renderCombined();
 }
 
 document.querySelectorAll('input[name="previewMode"]')

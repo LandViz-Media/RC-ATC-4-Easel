@@ -1,4 +1,4 @@
-# RC-ATC for Easel — NC Preview UI Prototype v0.3.1
+# RC-ATC for Easel — NC Preview UI Prototype v0.3.2
 
 This is a standalone preview prototype for the RC-ATC for Easel project.
 
@@ -89,3 +89,17 @@ composer.
 - An empty combined visibility set now correctly means no toolpaths are displayed.
 - Kept rapid-move controls independent of tool visibility.
 - Kept the v0.3.0 rendering approach and proven parser baseline unchanged.
+
+## v0.3.2
+
+- Fixed the preview-mode HTML so it matches the radio-button logic in `app.js`.
+- Preview mode is now mutually exclusive:
+  - No detail preview
+  - Show detailed preview
+  - Show combined project preview
+- Fixed the combined preview activation.
+- Tool 1–10 visibility controls remain available inside the combined preview.
+- Newly assigned tools default to visible.
+- All/None controls remain available for assigned tools.
+- Rapid movement controls remain independent of tool visibility.
+- No changes to the proven parser or v0.3.0 rendering geometry.
