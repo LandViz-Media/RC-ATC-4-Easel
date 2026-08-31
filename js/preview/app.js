@@ -66,11 +66,30 @@ function movePopover(e){pop.style.left=(e.clientX+14)+"px";pop.style.top=(e.clie
 function hidePopover(){pop.hidden=true;}
 function renderDetailChooser(){
   detailChooser.innerHTML="";
-  operations.forEach((op,i)=>{const b=document.createElement("button");b.textContent=op.file.name;b.className=i===selectedDetail?"active":"";
-    b.onclick=()=>{selectedDetail=i;renderDetailChooser();renderDetailed();};detailChooser.append(b);});
+  operations.forEach((op,i)=>{
+    const b=document.createElement("button");
+    b.textContent=op.file.name;
+    b.className=i===selectedDetail?"active":"";
+    b.onclick=()=>{
+      selectedDetail=i;
+      renderDetailChooser();
+      renderDetailed();
+    };
+    detailChooser.append(b);
+  });
 }
+
 function renderDetailed(){
-  const show=document.querySelector("#showDetailed").checked;detailSection.classList.toggle("hidden",!show);if(!show||selectedDetail<0||!operations[selectedDetail])return;
+  const show=document.querySelector("#showDetailed").checked;
+  detailSection.classList.toggle("hidden",!show);
+  if(!show) return;
+
+  if(selectedDetail<0 || !operations[selectedDetail]){
+    const ctx=detailCanvas.getContext("2d");
+    ctx.clearRect(0,0,detailCanvas.width,detailCanvas.height);
+    return;
+  }
+
   const op=operations[selectedDetail];
   NCPreviewRenderer.render(detailCanvas,op.parsed,{
     showRapid:document.querySelector("#detailRapid").checked,
@@ -79,27 +98,55 @@ function renderDetailed(){
     showAxes:document.querySelector("#detailAxes").checked
   });
 }
+
 function renderCombined(){
-  const show=document.querySelector("#showCombined").checked;combinedSection.classList.toggle("hidden",!show);if(!show)return;
-  const used=[...new Set(operations.map(o=>o.tool).filter(Boolean))].sort((a,b)=>a-b);
+  const show=document.querySelector("#showCombined").checked;
+  combinedSection.classList.toggle("hidden",!show);
+  if(!show) return;
+
+  const used=[...new Set(
+    operations.map(o=>o.tool).filter(t=>Number.isInteger(t))
+  )].sort((a,b)=>a-b);
+
+  // Rebuild the tool filters from the current operations each time the
+  // combined preview is shown or an operation/tool assignment changes.
   filters.innerHTML="";
-  used.forEach(t=>{const l=document.createElement("label");l.className="tool-filter";l.innerHTML=`<input type="checkbox" checked data-tool="${t}"> ${toolName(t)}`;
-    filters.append(l);l.querySelector("input").addEventListener("change",drawCombined);});
-  combinedMeta.textContent=operations.length?`${operations.length} operation${operations.length===1?"":"s"} · ${used.length} tool${used.length===1?"":"s"} assigned`:"Assign tools to operations to populate the combined preview.";
+  used.forEach(t=>{
+    const label=document.createElement("label");
+    label.className="tool-filter";
+    label.innerHTML=`<input type="checkbox" checked data-tool="${t}"> ${toolName(t)}`;
+    filters.append(label);
+    label.querySelector("input").addEventListener("change",drawCombined);
+  });
+
+  combinedMeta.textContent=operations.length
+    ? `${operations.length} operation${operations.length===1?"":"s"} · ${used.length} tool${used.length===1?"":"s"} assigned`
+    : "Assign tools to operations to populate the combined preview.";
+
   drawCombined();
 }
+
 function drawCombined(){
-  const visible=new Set([...filters.querySelectorAll("input:checked")].map(x=>Number(x.dataset.tool)));
-  NCPreviewRenderer.renderCombined(combinedCanvas,operations.map(o=>({parsed:o.parsed,tool:o.tool})),visible,{
+  const visible=new Set(
+    [...filters.querySelectorAll("input:checked")].map(x=>Number(x.dataset.tool))
+  );
+
+  const entries=operations
+    .filter(o=>o.parsed)
+    .map(o=>({parsed:o.parsed,tool:o.tool}));
+
+  NCPreviewRenderer.renderCombined(combinedCanvas,entries,visible,{
     showRapid:document.querySelector("#combinedRapid").checked,
     showStart:document.querySelector("#combinedStart").checked,
     showEnd:document.querySelector("#combinedEnd").checked
   });
 }
-document.querySelector("#showDetailed").addEventListener("change",renderDetailed);
-document.querySelector("#showCombined").addEventListener("change",renderCombined);
-["detailRapid","detailStart","detailEnd","detailAxes"].forEach(id=>document.querySelector("#"+id).addEventListener("change",renderDetailed));
-["combinedRapid","combinedStart","combinedEnd"].forEach(id=>document.querySelector("#"+id).addEventListener("change",drawCombined));
+
+function redrawCurrentPreview(){
+  if(document.querySelector("#showDetailed").checked) renderDetailed();
+  if(document.querySelector("#showCombined").checked) drawCombined();
+}
+
 document.querySelector("#allTools").onclick=()=>{filters.querySelectorAll("input").forEach(x=>x.checked=true);drawCombined();};
 document.querySelector("#noTools").onclick=()=>{filters.querySelectorAll("input").forEach(x=>x.checked=false);drawCombined();};
 fileInput.addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});

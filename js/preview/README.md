@@ -1,4 +1,4 @@
-# NC Thumbnail Integrated UI Prototype v0.2.6
+# NC Thumbnail Integrated UI Prototype v0.2.7
 
 This prototype keeps the visualization based on the proven standalone v0.1.6 engine.
 
@@ -13,3 +13,12 @@ This prototype keeps the visualization based on the proven standalone v0.1.6 eng
 - No G-code generation is included.
 
 Keep this separate from the machine-tested composer until the visualization is approved.
+
+
+## v0.2.7
+
+- Fixed preview checkbox redraw behavior.
+- Detailed-preview controls now redraw the existing canvas immediately.
+- Combined-preview controls now redraw immediately without rebuilding the entire operation list.
+- Tool visibility filters are rebuilt from current operation assignments whenever the combined preview is opened or an assignment changes.
+- Preview controls remain isolated from the machine/G-code composer.
