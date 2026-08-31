@@ -1,0 +1,18 @@
+(Test RapidChange subroutine Tool 3)
+
+G20
+G90
+G17
+G54
+
+G0 Z2.000
+M5
+M9
+G04 P4000
+
+M98 P633
+
+G0 Z2.000
+G0 X0.000 Y0.000
+
+M30
