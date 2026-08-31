@@ -89,5 +89,5 @@ function render(canvas, parsed, opts={showRapid:true,showStart:true,showAxes:tru
   }
 }
 
-// Expose the renderer for the integrated UI controller.
+// Integrated UI API: expose the proven renderer without changing its behavior.
 window.NCPreviewRenderer = { render };

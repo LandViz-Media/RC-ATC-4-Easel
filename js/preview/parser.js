@@ -55,5 +55,5 @@ function parseNC(text) {
   return {moves,bounds:{minX,minY,maxX,maxY},firstXY,lastXY:lastCutXY};
 }
 
-// Expose the parser for the integrated UI controller.
+// Integrated UI API: expose the proven parser without changing its behavior.
 window.NCPreviewParser = { parseNC };

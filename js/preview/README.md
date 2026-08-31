@@ -1,27 +1,55 @@
-# NC Thumbnail Integrated UI Prototype v0.2.4
+# NC Thumbnail Integrated UI Prototype v0.2.5
 
-Integrated UI prototype built from the **proven v0.1.6 parser and renderer**.
+This prototype integrates the **proven v0.1.6 parser and renderer** into the composer-style interface.
 
-This prototype does not generate G-code. It tests how the visualization can live inside the future RC-ATC-4-Easel composer.
+## Important deployment structure
 
-Features:
-- Multiple NC file import and drag/drop.
-- Individual operation thumbnails using the v0.1.6 parser/renderer.
+Keep all prototype files together:
+
+```text
+js/
+└── preview/
+    ├── index.html
+    ├── css.css
+    ├── parser.js
+    ├── renderer.js
+    ├── app.js
+    └── README.md
+```
+
+`index.html` loads `parser.js`, `renderer.js`, and then `app.js` from the same directory.
+
+## Features
+
+- Multiple `.nc` file import and drag/drop.
+- Individual operation thumbnails using the proven v0.1.6 visualization engine.
 - Green start and red end markers.
 - Rapid moves in gray dashes.
 - Tool assignment using Tools 1–10.
 - Operation ordering/removal.
 - Hover details.
-- Combined project preview with per-tool visibility.
-- All/None visibility controls.
-
-The combined preview reuses the same parsing rules as the individual previews. No machine/G-code generation logic is included in this prototype.
-
-## v0.2.3
-
-Restored the exact v0.1.6 parsing behavior as the visualization baseline. The earlier integrated prototype had introduced a second simplified renderer; this version keeps the proven geometry rules and only adds UI orchestration around them.
-
+- Combined project preview.
+- Per-tool visibility with All/None controls.
 
 ## v0.2.4
 
-Fixed the integrated browser wiring. The proven parser and renderer are now explicitly exposed as `window.NCPreviewParser` and `window.NCPreviewRenderer`, matching what the integrated UI controller calls. The previous prototype loaded the files but failed when a file-selection event tried to invoke undefined globals.
+Fixed the browser wiring by explicitly exposing the proven parser and renderer as `window.NCPreviewParser` and `window.NCPreviewRenderer`, which is what the integrated UI controller uses.
+
+No changes were made to the underlying visualization geometry logic.
+
+
+## Exact GitHub deployment structure
+
+Place the files directly in:
+
+```text
+RC-ATC-4-Easel/js/preview/
+├── index.html
+├── app.js
+├── parser.js
+├── renderer.js
+├── css.css
+└── README.md
+```
+
+There should be **no `js/` directory inside `preview/`**.

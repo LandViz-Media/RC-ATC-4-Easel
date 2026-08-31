@@ -3,20 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RC-ATC for Easel — Preview UI Prototype v0.2.3</title>
+<title>RC-ATC for Easel — Preview UI Prototype v0.2.4</title>
 <link rel="stylesheet" href="css.css">
 </head>
 <body>
 <main>
 <header>
   <h1>RC-ATC for Easel — Preview UI Prototype</h1>
-  <div class="version">v0.2.4 — UI prototype; G-code generation not included</div>
+  <div class="version">v0.2.5 — UI prototype; G-code generation not included</div>
   <p>Integrated preview prototype using the proven v0.1.6 NC parser and renderer.</p>
 </header>
 
 <section class="panel">
   <h2>Job Operations</h2>
-  <label class="file-label"><span>Add Easel .nc files</span><input id="files" type="file" accept=".nc,.gcode,.txt" multiple></label>
+  <label class="file-label">
+    <span>Add Easel .nc files</span>
+    <input id="files" type="file" accept=".nc,.gcode,.txt" multiple>
+  </label>
   <div id="dropzone" class="dropzone">Or drag .nc files here</div>
   <div id="status" class="status">No files loaded.</div>
   <div id="operations" class="operations"></div>
@@ -24,15 +27,21 @@
 
 <section class="panel">
   <div class="combined-head">
-    <div><h2>Combined Project Preview</h2><div id="combinedMeta" class="meta">Add operations above to see the combined preview.</div></div>
-    <div class="toolbar"><button id="allTools" type="button">All</button><button id="noTools" type="button">None</button></div>
+    <div>
+      <h2>Combined Project Preview</h2>
+      <div id="combinedMeta" class="meta">Add operations above to see the combined preview.</div>
+    </div>
+    <div class="toolbar">
+      <button id="allTools" type="button">All</button>
+      <button id="noTools" type="button">None</button>
+    </div>
   </div>
   <div id="toolFilters" class="tool-filters"></div>
   <div class="combined-wrap"><canvas id="combinedCanvas"></canvas></div>
 </section>
 </main>
-<script src="js/parser.js"></script>
-<script src="js/renderer.js"></script>
-<script src="js/app.js"></script>
+<script src="parser.js"></script>
+<script src="renderer.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
