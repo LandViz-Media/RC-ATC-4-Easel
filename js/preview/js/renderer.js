@@ -88,3 +88,6 @@ function render(canvas, parsed, opts={showRapid:true,showStart:true,showAxes:tru
     ctx.save(); ctx.fillStyle="#CC3333"; ctx.beginPath(); ctx.arc(p.x,p.y,6,0,Math.PI*2); ctx.fill(); ctx.restore();
   }
 }
+
+// Expose the renderer for the integrated UI controller.
+window.NCPreviewRenderer = { render };

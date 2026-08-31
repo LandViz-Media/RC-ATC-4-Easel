@@ -1,4 +1,4 @@
-# NC Thumbnail Integrated UI Prototype v0.2.3
+# NC Thumbnail Integrated UI Prototype v0.2.4
 
 Integrated UI prototype built from the **proven v0.1.6 parser and renderer**.
 
@@ -20,3 +20,8 @@ The combined preview reuses the same parsing rules as the individual previews. N
 ## v0.2.3
 
 Restored the exact v0.1.6 parsing behavior as the visualization baseline. The earlier integrated prototype had introduced a second simplified renderer; this version keeps the proven geometry rules and only adds UI orchestration around them.
+
+
+## v0.2.4
+
+Fixed the integrated browser wiring. The proven parser and renderer are now explicitly exposed as `window.NCPreviewParser` and `window.NCPreviewRenderer`, matching what the integrated UI controller calls. The previous prototype loaded the files but failed when a file-selection event tried to invoke undefined globals.

@@ -54,3 +54,6 @@ function parseNC(text) {
   if (!Number.isFinite(minX)) return {moves:[],bounds:null,firstXY:null};
   return {moves,bounds:{minX,minY,maxX,maxY},firstXY,lastXY:lastCutXY};
 }
+
+// Expose the parser for the integrated UI controller.
+window.NCPreviewParser = { parseNC };
