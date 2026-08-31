@@ -1,4 +1,4 @@
-# RC-ATC for Easel — NC Preview UI Prototype v0.2.9
+# RC-ATC for Easel — NC Preview UI Prototype v0.3.0
 
 This is a standalone preview prototype for the RC-ATC for Easel project.
 
@@ -65,3 +65,14 @@ Do not add another `js` directory inside `preview`.
 This prototype is a visualization aid only. It does not execute G-code and does
 not generate or modify the machine-control `.nc` output used by the RC-ATC
 composer.
+
+
+## v0.3.0
+
+- Fixed thumbnail/detail viewport fitting.
+- Cutting geometry now determines the preview scale.
+- Rapid travel moves no longer shrink the cutting geometry to accommodate distant travel coordinates.
+- Rapid moves are still drawn using the same coordinate transform when enabled.
+- The proven parser remains unchanged.
+- UI-only move statistics remain calculated in `app.js`.
+- Version references were checked for consistency across the deployment.
