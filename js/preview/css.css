@@ -1,22 +1,17 @@
-/* Responsibility: Integrated preview prototype layout and styling. */
+/* Responsibility: Layout and styling for preview prototype v0.2.6. */
 :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#222;background:#f5f5f5}
-body{margin:0}main{max-width:1200px;margin:0 auto;padding:28px}
-header{margin-bottom:22px}h1{margin:0 0 4px}.version{color:#666;font-size:.9rem}
+body{margin:0}main{max-width:1200px;margin:0 auto;padding:28px}header{margin-bottom:22px}h1{margin:0 0 4px}.version{color:#666;font-size:.9rem}
 .panel{background:#fff;border:1px solid #ddd;border-radius:10px;padding:18px;margin-bottom:20px}
-.file-label{display:inline-flex;align-items:center;gap:12px;font-weight:600;cursor:pointer}
-.dropzone{margin-top:14px;border:2px dashed #bbb;border-radius:8px;padding:16px;text-align:center;color:#666}
-.dropzone.dragover{border-color:#333;background:#fafafa}.status{margin:10px 0 14px;color:#555}
-.operations{display:grid;gap:12px;margin-top:16px}
+.file-label{display:inline-flex;align-items:center;gap:12px;font-weight:600;cursor:pointer}.dropzone{margin-top:14px;border:2px dashed #bbb;border-radius:8px;padding:16px;text-align:center;color:#666}
+.dropzone.dragover{border-color:#333;background:#fafafa}.status{margin:10px 0 14px;color:#555}.operations{display:grid;gap:12px;margin-top:16px}
 .operation{display:grid;grid-template-columns:230px 1fr auto;gap:16px;align-items:center;border:1px solid #ddd;border-radius:8px;padding:10px}
 .thumb{width:220px;height:135px}.thumb canvas{width:100%;height:100%;border:1px solid #ddd;border-radius:5px;background:#fff}
-.op-info h3{margin:0 0 5px;font-size:1rem}.op-info p{margin:3px 0;color:#666;font-size:.84rem}
-.op-info label{display:block;margin-top:8px;font-size:.9rem}.op-info select{width:100%;max-width:360px;padding:5px}
-.actions{display:flex;gap:5px;flex-direction:column}
-.actions button,.toolbar button{padding:6px 9px;border:1px solid #bbb;background:#fff;border-radius:5px;cursor:pointer}
-.actions button:hover,.toolbar button:hover{background:#eee}
-.combined-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.toolbar{display:flex;gap:6px}
-.meta{color:#666;font-size:.84rem}.tool-filters{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0}
-.tool-filter{padding:7px 10px;border:1px solid #ddd;border-radius:6px;background:#fafafa}
-.combined-wrap canvas{width:100%;aspect-ratio:16/10;display:block;border:1px solid #ddd;background:#fff}
+.op-info h3{margin:0 0 5px;font-size:1rem}.op-info p{margin:3px 0;color:#666;font-size:.84rem}.op-info label{display:block;margin-top:8px;font-size:.9rem}.op-info select{width:100%;max-width:360px;padding:5px}
+.actions{display:flex;gap:5px;flex-direction:column}.actions button,.toolbar button{padding:6px 9px;border:1px solid #bbb;background:#fff;border-radius:5px;cursor:pointer}.actions button:hover,.toolbar button:hover{background:#eee}
+.preview-controls{display:flex;gap:24px;flex-wrap:wrap}.preview-section{margin-top:18px;border-top:1px solid #eee;padding-top:18px}.hidden{display:none!important}
+.preview-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.toolbar{display:flex;gap:6px}.meta{color:#666;font-size:.84rem}
+.tool-filters{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0}.tool-filter{padding:7px 10px;border:1px solid #ddd;border-radius:6px;background:#fafafa}
+.detail-chooser{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.detail-chooser button{padding:7px 10px;border:1px solid #bbb;border-radius:6px;background:#fff;cursor:pointer}.detail-chooser button.active{font-weight:700;background:#eee}
+.detail-controls{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0}.large-preview canvas{width:100%;aspect-ratio:16/10;display:block;border:1px solid #ddd;background:#fff}
 .popover{position:fixed;z-index:10;background:#fff;border:1px solid #bbb;border-radius:8px;box-shadow:0 8px 24px #0002;padding:12px;max-width:320px;font-size:.84rem;pointer-events:none}
-@media(max-width:750px){.operation{grid-template-columns:1fr}.thumb{width:100%;height:auto}.thumb canvas{aspect-ratio:16/10}.combined-head{flex-direction:column}}
+@media(max-width:750px){.operation{grid-template-columns:1fr}.thumb{width:100%;height:auto}.thumb canvas{aspect-ratio:16/10}.preview-header{flex-direction:column}}
