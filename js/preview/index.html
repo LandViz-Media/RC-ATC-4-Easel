@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RC-ATC for Easel — Preview UI Prototype v0.2.9</title>
+<link rel="stylesheet" href="css.css">
+</head>
+<body>
+<main>
+<header>
+<h1>RC-ATC for Easel — Preview UI Prototype</h1>
+<div class="version">v0.2.9 — UI prototype; G-code generation not included</div>
+<p>Compact operation thumbnails with optional detailed and combined previews.</p>
+</header>
+<section class="panel">
+<h2>Job Operations</h2>
+<label class="file-label"><span>Add Easel .nc files</span><input id="files" type="file" accept=".nc,.gcode,.txt" multiple></label>
+<div id="dropzone" class="dropzone">Or drag .nc files here</div>
+<div id="status" class="status">No files loaded.</div>
+<div id="operations" class="operations"></div>
+</section>
+<section class="panel">
+<div class="preview-controls">
+<label><input id="showDetailed" type="checkbox"> Show detailed preview</label>
+<label><input id="showCombined" type="checkbox"> Show combined project preview</label>
+</div>
+<div id="detailedSection" class="preview-section hidden">
+<div class="preview-header"><div><h2>Detailed Preview</h2><div class="meta">Select an operation to view its larger toolpath.</div></div></div>
+<div id="detailChooser" class="detail-chooser"></div>
+<div class="detail-controls">
+<label><input id="detailRapid" type="checkbox" checked> Show rapid moves</label>
+<label><input id="detailStart" type="checkbox" checked> Show start point</label>
+<label><input id="detailEnd" type="checkbox" checked> Show end point</label>
+<label><input id="detailAxes" type="checkbox"> Show axes</label>
+</div>
+<div class="large-preview"><canvas id="detailCanvas"></canvas></div>
+</div>
+<div id="combinedSection" class="preview-section hidden">
+<div class="preview-header"><div><h2>Combined Project Preview</h2><div id="combinedMeta" class="meta">Assign tools to operations to populate the combined preview.</div></div>
+<div class="toolbar"><button id="allTools" type="button">All</button><button id="noTools" type="button">None</button></div></div>
+<div id="toolFilters" class="tool-filters"></div>
+<div class="detail-controls">
+<label><input id="combinedRapid" type="checkbox" checked> Show rapid moves</label>
+<label><input id="combinedStart" type="checkbox" checked> Show start points</label>
+<label><input id="combinedEnd" type="checkbox" checked> Show end points</label>
+</div>
+<div class="large-preview"><canvas id="combinedCanvas"></canvas></div>
+</div>
+</section>
+</main>
+<script src="parser.js?v=0.2.9"></script><script src="renderer.js?v=0.2.9"></script><script src="app.js?v=0.2.9"></script>
+</body>
+</html>
