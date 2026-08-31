@@ -52,7 +52,25 @@ function parseNC(text) {
   }
 
   if (!Number.isFinite(minX)) return {moves:[],bounds:null,firstXY:null};
-  return {moves,bounds:{minX,minY,maxX,maxY},firstXY,lastXY:lastCutXY};
+  
+  // Compatibility summary used by the preview UI.
+  const cutMoves = moves.filter(m => m.type === "cut" || m.type === "arcCW" || m.type === "arcCCW").length;
+  const rapidMoves = moves.filter(m => m.type === "rapid").length;
+  let minZ = null, maxZ = null;
+  for (const m of moves) {
+    for (const key of ["z1","z2","z"]) {
+      if (typeof m[key] === "number" && Number.isFinite(m[key])) {
+        minZ = minZ === null ? m[key] : Math.min(minZ, m[key]);
+        maxZ = maxZ === null ? m[key] : Math.max(maxZ, m[key]);
+      }
+    }
+  }
+
+  return {moves,bounds:{minX,minY,maxX,maxY},firstXY,lastXY:lastCutXY,
+    cutMoves,
+    rapidMoves,
+    minZ,
+    maxZ};
 }
 
 // Integrated UI API: expose the proven parser without changing its behavior.

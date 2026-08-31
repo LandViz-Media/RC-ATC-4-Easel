@@ -2,7 +2,7 @@
 // This is a visual aid only and does not simulate machining.
 
 function mapFactory(bounds,width,height){
-  const pad=32;
+  const pad=48;
   const bw=Math.max(bounds.maxX-bounds.minX,0.001);
   const bh=Math.max(bounds.maxY-bounds.minY,0.001);
   const scale=Math.min((width-2*pad)/bw,(height-2*pad)/bh);

@@ -5,7 +5,7 @@ body{margin:0}main{max-width:1200px;margin:0 auto;padding:28px}header{margin-bot
 .file-label{display:inline-flex;align-items:center;gap:12px;font-weight:600;cursor:pointer}.dropzone{margin-top:14px;border:2px dashed #bbb;border-radius:8px;padding:16px;text-align:center;color:#666}
 .dropzone.dragover{border-color:#333;background:#fafafa}.status{margin:10px 0 14px;color:#555}.operations{display:grid;gap:12px;margin-top:16px}
 .operation{display:grid;grid-template-columns:230px 1fr auto;gap:16px;align-items:center;border:1px solid #ddd;border-radius:8px;padding:10px}
-.thumb{width:220px;height:135px}.thumb canvas{width:100%;height:100%;border:1px solid #ddd;border-radius:5px;background:#fff}
+.thumb{width:220px;height:138px}.thumb canvas{width:100%;height:100%;border:1px solid #ddd;border-radius:5px;background:#fff}
 .op-info h3{margin:0 0 5px;font-size:1rem}.op-info p{margin:3px 0;color:#666;font-size:.84rem}.op-info label{display:block;margin-top:8px;font-size:.9rem}.op-info select{width:100%;max-width:360px;padding:5px}
 .actions{display:flex;gap:5px;flex-direction:column}.actions button,.toolbar button{padding:6px 9px;border:1px solid #bbb;background:#fff;border-radius:5px;cursor:pointer}.actions button:hover,.toolbar button:hover{background:#eee}
 .preview-controls{display:flex;gap:24px;flex-wrap:wrap}.preview-section{margin-top:18px;border-top:1px solid #eee;padding-top:18px}.hidden{display:none!important}
