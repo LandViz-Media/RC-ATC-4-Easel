@@ -78,3 +78,28 @@ body{margin:0}main{max-width:1200px;margin:0 auto;padding:28px}header{margin-bot
     gap:9px;
   }
 }
+
+/* v0.3.4 operation-card polish.
+   Responsibility: keep the thumbnail, tool assignment, warning, and controls visible
+   without changing the visualization itself. */
+.operation .op-info{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+}
+.operation .op-info label{
+  margin-top:8px;
+  width:100%;
+}
+.operation .op-info select{
+  margin-left:5px;
+}
+.operation .tool-warning{
+  display:block;
+  margin-top:8px;
+}
+.actions button:disabled{
+  opacity:.4;
+  cursor:default;
+}

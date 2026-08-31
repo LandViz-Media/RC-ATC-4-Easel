@@ -1,4 +1,4 @@
-// RC-ATC Preview UI v0.3.3
+// RC-ATC Preview UI v0.3.4
 // Responsibility: Manage operation files, tool assignment, ordering, hover details,
 // and optional detailed/combined previews. This prototype does not generate G-code.
 

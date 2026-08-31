@@ -201,7 +201,7 @@ function renderCombined(canvas,entries,visibleTools,opts={}){
     ctx.font="18px system-ui";
     ctx.textAlign="center";
     ctx.fillText(
-      "Assign a tool and select at least one visible tool.",
+      "No assigned toolpaths are selected for display. Assign tools to your operations, then turn on the tools you want to see.",
       w/2,h/2
     );
     return;

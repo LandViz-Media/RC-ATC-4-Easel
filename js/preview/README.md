@@ -1,4 +1,4 @@
-# RC-ATC for Easel — NC Preview UI Prototype v0.3.3
+# RC-ATC for Easel — NC Preview UI Prototype v0.3.4
 
 This is a standalone preview prototype for the RC-ATC for Easel project.
 
@@ -117,3 +117,14 @@ composer.
 - Kept Tool 1–10 visibility controls and All/None behavior in the combined preview.
 - Added/retained ruler-ready axes behavior for the larger preview; axes remain off by default.
 - No changes to the proven parser or cutting-geometry rendering approach.
+
+## v0.3.4
+
+- Fixed the operation-list regression that prevented thumbnails and tool-assignment
+  controls from appearing correctly.
+- Restored the Assigned Tool dropdown for every operation.
+- Restored the unassigned-tool warning beside the operation information.
+- Preserved operation reorder/remove controls.
+- Clarified the combined-preview empty-state message.
+- Kept the mutually exclusive preview-mode radio controls.
+- No changes to the proven parser or preview geometry.
