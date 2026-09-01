@@ -79,7 +79,7 @@ body{margin:0}main{max-width:1200px;margin:0 auto;padding:28px}header{margin-bot
   }
 }
 
-/* v0.3.4 operation-card polish.
+/* v0.3.5 operation-card polish.
    Responsibility: keep the thumbnail, tool assignment, warning, and controls visible
    without changing the visualization itself. */
 .operation .op-info{

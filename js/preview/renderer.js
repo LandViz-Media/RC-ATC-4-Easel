@@ -200,9 +200,14 @@ function renderCombined(canvas,entries,visibleTools,opts={}){
     ctx.fillStyle="#777";
     ctx.font="18px system-ui";
     ctx.textAlign="center";
+    ctx.textAlign="center";
     ctx.fillText(
-      "No assigned toolpaths are selected for display. Assign tools to your operations, then turn on the tools you want to see.",
-      w/2,h/2
+      "No assigned toolpaths are selected for display.",
+      w/2,h/2-12
+    );
+    ctx.fillText(
+      "Assign tools to operations, then turn on the tools you want to see.",
+      w/2,h/2+16
     );
     return;
   }

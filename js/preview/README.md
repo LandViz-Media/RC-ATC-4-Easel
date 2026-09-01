@@ -1,4 +1,4 @@
-# RC-ATC for Easel — NC Preview UI Prototype v0.3.4
+# RC-ATC for Easel — NC Preview UI Prototype v0.3.5
 
 This is a standalone preview prototype for the RC-ATC for Easel project.
 
@@ -128,3 +128,11 @@ composer.
 - Clarified the combined-preview empty-state message.
 - Kept the mutually exclusive preview-mode radio controls.
 - No changes to the proven parser or preview geometry.
+
+## v0.3.5
+
+- Fixed the browser startup regression introduced in v0.3.4.
+- Added the missing project-status DOM element required by `app.js`.
+- Added a defensive guard so a missing status element cannot stop the preview UI from initializing.
+- Added a line break to the combined-preview empty-state message for readability.
+- No changes to the parser or toolpath rendering geometry.

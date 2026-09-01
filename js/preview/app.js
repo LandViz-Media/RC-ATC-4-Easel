@@ -1,4 +1,4 @@
-// RC-ATC Preview UI v0.3.4
+// RC-ATC Preview UI v0.3.5
 // Responsibility: Manage operation files, tool assignment, ordering, hover details,
 // and optional detailed/combined previews. This prototype does not generate G-code.
 
@@ -91,6 +91,8 @@ async function addFiles(fileList){
 function updateProjectStatus(){
   const assigned=operations.filter(o=>Number.isInteger(o.tool)).length;
   const unassigned=operations.length-assigned;
+
+  if(!projectStatus) return;
 
   if(!operations.length){
     projectStatus.textContent="";
