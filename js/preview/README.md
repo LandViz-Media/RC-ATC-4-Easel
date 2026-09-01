@@ -1,4 +1,4 @@
-# RC-ATC for Easel — NC Preview UI Prototype v0.3.7
+# RC-ATC for Easel — NC Preview UI Prototype v0.3.8
 
 This is a standalone preview prototype for the RC-ATC for Easel project.
 
@@ -162,3 +162,12 @@ composer.
 - Tool colors repeat after the available palette.
 - Tool numbers/names remain visible in the legend so color is not the sole identifier.
 - No parser or toolpath geometry changes.
+
+## v0.3.8
+
+- Fixed the Combined Preview **Show axes & measurements** control so changing it immediately redraws the preview.
+- Removed the separate tool color legend above the visibility controls.
+- Added a colored line directly to each Tool 1–10 visibility button, matching that tool's path color.
+- Tool number/name remains visible so color is not the sole identifier.
+- Preserved the colorblind-safer palette from v0.3.7.
+- No parser or machine-composer changes.

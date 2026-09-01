@@ -1,4 +1,4 @@
-// RC-ATC Preview UI v0.3.7
+// RC-ATC Preview UI v0.3.8
 // Responsibility: Manage operation files, tool assignment, ordering, hover details,
 // and optional detailed/combined previews. This prototype does not generate G-code.
 
@@ -266,17 +266,6 @@ function renderDetailed(){
 }
 
 
-function renderToolLegend(used){
-  if(!toolLegend) return;
-  toolLegend.innerHTML="";
-  used.forEach(t=>{
-    const item=document.createElement("span"); item.className="legend-item";
-    const swatch=document.createElement("span"); swatch.className="legend-swatch";
-    swatch.style.background=NCPreviewRenderer.TOOL_COLORS[t]||"#222222";
-    item.append(swatch,document.createTextNode(toolName(t))); toolLegend.append(item);
-  });
-}
-
 function renderCombined(){
   if(currentPreviewMode()!=="combined") return;
 
@@ -290,8 +279,6 @@ function renderCombined(){
   });
 
   filters.innerHTML="";
-  renderToolLegend(used);
-
   used.forEach(t=>{
     const label=document.createElement("label");
     label.className="tool-filter";
@@ -301,6 +288,7 @@ function renderCombined(){
     input.checked=visibleTools.has(t);
     input.dataset.tool=t;
 
+    label.style.setProperty("--tool-color", NCPreviewRenderer.TOOL_COLORS[t] || "#111111");
     label.append(input,document.createTextNode(" "+toolName(t)));
     filters.append(label);
 
@@ -353,7 +341,7 @@ document.querySelectorAll('input[name="previewMode"]')
 ["detailRapid","detailStart","detailEnd","detailAxes"]
   .forEach(id=>document.querySelector("#"+id).addEventListener("change",renderDetailed));
 
-["combinedRapid","combinedStart","combinedEnd"]
+["combinedRapid","combinedStart","combinedEnd","combinedAxes"]
   .forEach(id=>document.querySelector("#"+id).addEventListener("change",drawCombined));
 
 document.querySelector("#allTools").onclick=()=>{
