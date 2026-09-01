@@ -4,9 +4,17 @@
 // v0.3.6 additions: optional inch rulers/measurement ticks and tool-specific
 // colors in the combined preview. The parser contract remains unchanged.
 
-const TOOL_COLORS={
-  1:'#2563eb',2:'#dc2626',3:'#059669',4:'#9333ea',5:'#ea580c',
-  6:'#0891b2',7:'#ca8a04',8:'#db2777',9:'#4f46e5',10:'#65a30d'
+const TOOL_COLORS = {
+  1:"#111111", // black
+  2:"#2563eb", // blue
+  3:"#ea580c", // orange
+  4:"#16a34a", // green
+  5:"#db2777", // pink
+  6:"#0891b2", // turquoise
+  7:"#111111", // repeat black
+  8:"#2563eb", // repeat blue
+  9:"#ea580c", // repeat orange
+  10:"#16a34a" // repeat green
 };
 
 function cuttingBounds(parsed){

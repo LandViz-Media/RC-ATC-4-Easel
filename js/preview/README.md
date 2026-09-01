@@ -1,4 +1,4 @@
-# RC-ATC for Easel — NC Preview UI Prototype v0.3.6
+# RC-ATC for Easel — NC Preview UI Prototype v0.3.7
 
 This is a standalone preview prototype for the RC-ATC for Easel project.
 
@@ -146,3 +146,19 @@ composer.
 - Rapid moves remain medium-gray dashed lines.
 - Individual operation thumbnails remain unchanged and monochrome.
 - Kept the proven parser and cutting-geometry fitting approach unchanged.
+
+## Milestones
+
+### v0.3.5 — Successful Preview Milestone
+- Stable integrated preview UI.
+- Thumbnails, detailed preview, combined preview, tool visibility, and rapid-movement controls working.
+
+### v0.3.6
+- Added inch ruler/tick marks to the larger Detailed Preview.
+- Added colored toolpaths and a matching tool legend to the Combined Project Preview.
+
+## v0.3.7
+- Updated the toolpath palette to black, blue, orange, green, pink, and turquoise.
+- Tool colors repeat after the available palette.
+- Tool numbers/names remain visible in the legend so color is not the sole identifier.
+- No parser or toolpath geometry changes.
