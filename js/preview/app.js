@@ -1,4 +1,4 @@
-// RC-ATC Preview UI v0.3.5
+// RC-ATC Preview UI v0.3.6
 // Responsibility: Manage operation files, tool assignment, ordering, hover details,
 // and optional detailed/combined previews. This prototype does not generate G-code.
 
@@ -24,6 +24,7 @@ const detailCanvas=document.querySelector("#detailCanvas");
 const combinedCanvas=document.querySelector("#combinedCanvas");
 const filters=document.querySelector("#toolFilters");
 const combinedMeta=document.querySelector("#combinedMeta");
+const toolLegend=document.querySelector("#toolLegend");
 
 const pop=document.createElement("div");
 pop.className="popover";
@@ -259,7 +260,20 @@ function renderDetailed(){
     showRapid:document.querySelector("#detailRapid").checked,
     showStart:document.querySelector("#detailStart").checked,
     showEnd:document.querySelector("#detailEnd").checked,
-    showAxes:document.querySelector("#detailAxes").checked
+    showAxes:document.querySelector("#detailAxes").checked,
+    showRulers:document.querySelector("#detailAxes").checked
+  });
+}
+
+
+function renderToolLegend(used){
+  if(!toolLegend) return;
+  toolLegend.innerHTML="";
+  used.forEach(t=>{
+    const item=document.createElement("span"); item.className="legend-item";
+    const swatch=document.createElement("span"); swatch.className="legend-swatch";
+    swatch.style.background=NCPreviewRenderer.TOOL_COLORS[t]||"#222222";
+    item.append(swatch,document.createTextNode(toolName(t))); toolLegend.append(item);
   });
 }
 
@@ -276,6 +290,7 @@ function renderCombined(){
   });
 
   filters.innerHTML="";
+  renderToolLegend(used);
 
   used.forEach(t=>{
     const label=document.createElement("label");
@@ -311,7 +326,9 @@ function drawCombined(){
   NCPreviewRenderer.renderCombined(combinedCanvas,entries,visibleTools,{
     showRapid:document.querySelector("#combinedRapid").checked,
     showStart:document.querySelector("#combinedStart").checked,
-    showEnd:document.querySelector("#combinedEnd").checked
+    showEnd:document.querySelector("#combinedEnd").checked,
+    showAxes:document.querySelector("#combinedAxes").checked,
+    showRulers:document.querySelector("#combinedAxes").checked
   });
 }
 

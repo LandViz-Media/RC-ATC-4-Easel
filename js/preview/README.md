@@ -1,4 +1,4 @@
-# RC-ATC for Easel — NC Preview UI Prototype v0.3.5
+# RC-ATC for Easel — NC Preview UI Prototype v0.3.6
 
 This is a standalone preview prototype for the RC-ATC for Easel project.
 
@@ -136,3 +136,13 @@ composer.
 - Added a defensive guard so a missing status element cannot stop the preview UI from initializing.
 - Added a line break to the combined-preview empty-state message for readability.
 - No changes to the parser or toolpath rendering geometry.
+
+## v0.3.6
+
+- Added optional inch rulers/tick marks to the larger Detailed Preview.
+- Added matching axes & measurements control to the Combined Project Preview.
+- Added tool-specific colors to Combined Project Preview paths.
+- Added a matching color legend for assigned tools.
+- Rapid moves remain medium-gray dashed lines.
+- Individual operation thumbnails remain unchanged and monochrome.
+- Kept the proven parser and cutting-geometry fitting approach unchanged.
