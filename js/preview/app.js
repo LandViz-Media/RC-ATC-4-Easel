@@ -1,4 +1,4 @@
-// RC-ATC Preview UI v0.3.8
+// RC-ATC Preview UI v0.3.9
 // Responsibility: Manage operation files, tool assignment, ordering, hover details,
 // and optional detailed/combined previews. This prototype does not generate G-code.
 
@@ -58,7 +58,61 @@ function operationStats(parsed){
       }
     }
   }
-  return {cutMoves,rapidMoves,minZ,maxZ};
+  let minCutZ=parsed?.minCutZ ?? null;
+  let maxCutZ=parsed?.maxCutZ ?? null;
+  if(minCutZ===null){
+    for(const m of moves){
+      if(cutTypes.has(m.type)){
+        for(const value of [m.z1,m.z2]){
+          if(typeof value==='number' && Number.isFinite(value)){
+            minCutZ=minCutZ===null?value:Math.min(minCutZ,value);
+            maxCutZ=maxCutZ===null?value:Math.max(maxCutZ,value);
+          }
+        }
+      }
+    }
+  }
+  return {cutMoves,rapidMoves,minZ,maxZ,minCutZ,maxCutZ};
+}
+
+function dimensionText(b){
+  return b ? `${(b.maxX-b.minX).toFixed(3)} × ${(b.maxY-b.minY).toFixed(3)} in` : "No XY toolpath";
+}
+
+function requirementsText(parsed){
+  const rapidBounds=parsed?.bounds;
+  const cutBounds=parsed?.cuttingBounds;
+  const stats=operationStats(parsed);
+  let html=`<div class="requirements"><strong>Required workpiece</strong>: ${dimensionText(rapidBounds)} <span class="muted">(includes rapid XY moves)</span><br>`;
+  html+=`<strong>Cutting envelope</strong>: ${dimensionText(cutBounds)} <span class="muted">(cutting moves only)</span>`;
+  if(stats.minCutZ!==null) html+=`<br><strong>Minimum cutting depth</strong>: Z ${stats.minCutZ.toFixed(3)} in`;
+  html+=`</div>`;
+  return html;
+}
+
+function combinedBounds(entries, field){
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for(const e of entries){
+    const b=e.parsed?.[field];
+    if(!b) continue;
+    minX=Math.min(minX,b.minX); minY=Math.min(minY,b.minY);
+    maxX=Math.max(maxX,b.maxX); maxY=Math.max(maxY,b.maxY);
+  }
+  return Number.isFinite(minX)?{minX,minY,maxX,maxY}:null;
+}
+
+function combinedRequirements(entries){
+  const rapid=combinedBounds(entries,"bounds");
+  const cut=combinedBounds(entries,"cuttingBounds");
+  let minZ=null;
+  for(const e of entries){
+    const z=e.parsed?.minCutZ;
+    if(typeof z==='number' && Number.isFinite(z)) minZ=minZ===null?z:Math.min(minZ,z);
+  }
+  let html=`<div class="requirements"><strong>Required workpiece</strong>: ${dimensionText(rapid)} <span class="muted">(all XY moves, including rapid)</span><br>`;
+  html+=`<strong>Cutting envelope</strong>: ${dimensionText(cut)} <span class="muted">(cutting moves only)</span>`;
+  if(minZ!==null) html+=`<br><strong>Minimum cutting depth</strong>: Z ${minZ.toFixed(3)} in`;
+  return html+`</div>`;
 }
 
 function toolSelect(value){
@@ -133,8 +187,8 @@ function renderUI(){
 
     info.innerHTML=
       `<h3>${escapeHTML(op.file.name)}</h3>`+
-      `<p>${b?`XY: ${(b.maxX-b.minX).toFixed(3)} × ${(b.maxY-b.minY).toFixed(3)} in`:"No XY toolpath"}</p>`+
-      `<p>${stats.cutMoves} cutting moves · ${stats.rapidMoves} rapid moves</p>`;
+      `<p>${dimensionText(b)} · ${stats.cutMoves} cutting moves · ${stats.rapidMoves} rapid moves</p>`+
+      requirementsText(op.parsed);
 
     const label=document.createElement("label");
     label.textContent="Assigned tool: ";
@@ -207,11 +261,12 @@ function showPopover(e,op){
 
   let html=`<strong>${escapeHTML(op.file.name)}</strong><br>`;
   html+=`${op.tool?toolName(op.tool):"Tool not assigned"}<br>`;
-  html+=`${b?`XY: ${(b.maxX-b.minX).toFixed(3)} × ${(b.maxY-b.minY).toFixed(3)} in`:"No XY toolpath"}<br>`;
+  html+=`Required workpiece: ${dimensionText(b)}<br>`;
+  html+=`Cutting envelope: ${dimensionText(op.parsed.cuttingBounds)}<br>`;
   html+=`${stats.cutMoves} cutting moves · ${stats.rapidMoves} rapid moves`;
 
-  if(stats.minZ!==null){
-    html+=`<br>Z range: ${stats.minZ.toFixed(3)} to ${stats.maxZ.toFixed(3)}`;
+  if(stats.minCutZ!==null){
+    html+=`<br>Minimum cutting depth: Z ${stats.minCutZ.toFixed(3)} in`;
   }
 
   pop.innerHTML=html;
@@ -302,6 +357,12 @@ function renderCombined(){
   combinedMeta.textContent=operations.length
     ? `${operations.length} operation${operations.length===1?"":"s"} · ${used.length} tool${used.length===1?"":"s"} assigned`
     : "Assign tools to operations to populate the combined preview.";
+
+  const combinedRequirementsEl=document.querySelector("#combinedRequirements");
+  if(combinedRequirementsEl){
+    const entries=operations.filter(o=>o.parsed).map(o=>({parsed:o.parsed,tool:o.tool}));
+    combinedRequirementsEl.innerHTML=entries.length?combinedRequirements(entries):"";
+  }
 
   drawCombined();
 }

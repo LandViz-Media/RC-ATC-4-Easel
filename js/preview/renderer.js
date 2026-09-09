@@ -1,8 +1,8 @@
 // Responsibility: Render top-down CNC toolpaths for thumbnails and detailed/combined previews.
 // This is a visual aid only and does not execute or generate machine G-code.
 //
-// v0.3.6 additions: optional inch rulers/measurement ticks and tool-specific
-// colors in the combined preview. The parser contract remains unchanged.
+// v0.3.9: visual measurement refinements, including start/end marker updates,
+// next-major-tick ruler extension, and explicit cutting-vs-rapid envelopes.
 
 const TOOL_COLORS = {
   1:"#111111", // black
@@ -18,6 +18,7 @@ const TOOL_COLORS = {
 };
 
 function cuttingBounds(parsed){
+  if(parsed?.cuttingBounds) return parsed.cuttingBounds;
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
   for(const m of (parsed.moves||[])){
     if(m.type==='rapid') continue;
@@ -80,16 +81,20 @@ function niceStep(span){
 function drawRulers(ctx,map){
   const b=map.bounds,step=niceStep(Math.max(b.maxX-b.minX,b.maxY-b.minY)),minor=step/2;
   const xBase=map.height-map.bottom+25,yBase=map.left-25;
+  const minXTick=Math.floor(b.minX/minor)*minor;
+  const maxXTick=Math.ceil(b.maxX/minor)*minor;
+  const minYTick=Math.floor(b.minY/minor)*minor;
+  const maxYTick=Math.ceil(b.maxY/minor)*minor;
   ctx.save();ctx.strokeStyle='#aaa';ctx.fillStyle='#666';ctx.lineWidth=1;ctx.font='11px system-ui';
-  for(let x=Math.ceil(b.minX/minor)*minor;x<=b.maxX+1e-9;x+=minor){
+  for(let x=minXTick;x<=maxXTick+1e-9;x+=minor){
     const q=map.point({x,y:b.minY}),major=Math.abs(x/step-Math.round(x/step))<1e-7,tick=major?10:5;
     ctx.beginPath();ctx.moveTo(q.x,xBase-tick);ctx.lineTo(q.x,xBase);ctx.stroke();
-    if(major){ctx.textAlign='center';ctx.fillText(Number(x.toFixed(3)).toString(),q.x,xBase+16);}
+    if(major && q.x>=map.left-1 && q.x<=map.width-map.right+1){ctx.textAlign='center';ctx.fillText(Number(x.toFixed(3)).toString(),q.x,xBase+16);}
   }
-  for(let y=Math.ceil(b.minY/minor)*minor;y<=b.maxY+1e-9;y+=minor){
+  for(let y=minYTick;y<=maxYTick+1e-9;y+=minor){
     const q=map.point({x:b.minX,y}),major=Math.abs(y/step-Math.round(y/step))<1e-7,tick=major?10:5;
     ctx.beginPath();ctx.moveTo(yBase,q.y);ctx.lineTo(yBase+tick,q.y);ctx.stroke();
-    if(major){ctx.textAlign='right';ctx.fillText(Number(y.toFixed(3)).toString(),yBase-5,q.y+4);}
+    if(major && q.y>=map.top-1 && q.y<=map.height-map.bottom+1){ctx.textAlign='right';ctx.fillText(Number(y.toFixed(3)).toString(),yBase-5,q.y+4);}
   }
   ctx.textAlign='left';ctx.fillText('in',map.width-27,xBase+16);ctx.restore();
 }
@@ -111,8 +116,12 @@ function drawParsed(ctx,parsed,map,opts){
       drawLine(ctx,map.point({x:m.x1,y:m.y1}),map.point({x:m.x2,y:m.y2}),false,stroke);
     } else drawArc(ctx,m,map,stroke);
   }
-  if(opts.showStart&&parsed.firstXY){const q=map.point(parsed.firstXY);ctx.save();ctx.fillStyle='#228B22';ctx.beginPath();ctx.arc(q.x,q.y,6,0,Math.PI*2);ctx.fill();ctx.restore();}
-  if(opts.showEnd&&parsed.lastXY){const q=map.point(parsed.lastXY);ctx.save();ctx.fillStyle='#CC3333';ctx.beginPath();ctx.arc(q.x,q.y,6,0,Math.PI*2);ctx.fill();ctx.restore();}
+  if(opts.showStart&&parsed.firstXY){
+    const q=map.point(parsed.firstXY);ctx.save();ctx.fillStyle='#111111';ctx.beginPath();ctx.arc(q.x,q.y,6,0,Math.PI*2);ctx.fill();ctx.restore();
+  }
+  if(opts.showEnd&&parsed.lastXY){
+    const q=map.point(parsed.lastXY);ctx.save();ctx.fillStyle='#111111';ctx.beginPath();ctx.moveTo(q.x,q.y-8);ctx.lineTo(q.x+8,q.y+6);ctx.lineTo(q.x-8,q.y+6);ctx.closePath();ctx.fill();ctx.restore();
+  }
 }
 
 function render(canvas,parsed,opts={}){

@@ -116,3 +116,8 @@ body{margin:0}main{max-width:1200px;margin:0 auto;padding:28px}header{margin-bot
 .tool-filter:hover{
   border-bottom-color:var(--tool-color, #111111);
 }
+
+/* v0.3.9 measurement summary.
+   Responsibility: present machine-relevant workpiece requirements without replacing the visual preview. */
+.requirements{margin-top:8px;padding:8px 10px;border-left:3px solid #777;background:#fafafa;font-size:.82rem;line-height:1.45}
+.requirements .muted{color:#777}

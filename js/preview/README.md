@@ -1,3 +1,14 @@
+# RC-ATC for Easel — Preview UI Prototype
+
+## v0.3.9 — Measurement and Marker Refinements
+
+- Changed the start marker to a black circle and the end marker to a black triangle for stronger visual distinction without relying on red/green color.
+- Extended ruler ticks/labels to the next logical tick beyond the exact cutting envelope while keeping reported dimensions unchanged.
+- Added explicit **Required workpiece** dimensions based on all XY movement, including rapid moves.
+- Added explicit **Cutting envelope** dimensions based on cutting moves only.
+- Added **Minimum cutting depth** based on the deepest cutting move Z value.
+- Preserved the v0.3.8 colorblind-safer tool palette and colored tool controls.
+
 # RC-ATC for Easel — NC Preview UI Prototype v0.3.8
 
 This is a standalone preview prototype for the RC-ATC for Easel project.

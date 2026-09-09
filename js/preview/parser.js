@@ -10,6 +10,8 @@ function parseNC(text) {
   const moves = [];
   let unitScale = 1; // inches internally
   let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+  let cutMinX=Infinity, cutMinY=Infinity, cutMaxX=-Infinity, cutMaxY=-Infinity;
+  let minCutZ=Infinity, maxCutZ=-Infinity;
   let firstXY = null;
   let lastXY = null;
   let lastCutXY = null;
@@ -50,6 +52,11 @@ function parseNC(text) {
         lastXY = {x:nx,y:ny};
         minX=Math.min(minX,x,nx); maxX=Math.max(maxX,x,nx);
         minY=Math.min(minY,y,ny); maxY=Math.max(maxY,y,ny);
+        if (motion === 1 || motion === 2 || motion === 3) {
+          cutMinX=Math.min(cutMinX,x,nx); cutMaxX=Math.max(cutMaxX,x,nx);
+          cutMinY=Math.min(cutMinY,y,ny); cutMaxY=Math.max(cutMaxY,y,ny);
+          minCutZ=Math.min(minCutZ,z,nz); maxCutZ=Math.max(maxCutZ,z,nz);
+        }
       }
     }
 
@@ -57,14 +64,17 @@ function parseNC(text) {
   }
 
   if (!Number.isFinite(minX)) {
-    return {moves:[],bounds:null,firstXY:null,lastXY:null};
+    return {moves:[],bounds:null,cuttingBounds:null,firstXY:null,lastXY:null,minCutZ:null,maxCutZ:null};
   }
 
   return {
     moves,
     bounds:{minX,minY,maxX,maxY},
+    cuttingBounds:Number.isFinite(cutMinX)?{minX:cutMinX,minY:cutMinY,maxX:cutMaxX,maxY:cutMaxY}:null,
     firstXY,
-    lastXY:lastCutXY
+    lastXY:lastCutXY,
+    minCutZ:Number.isFinite(minCutZ)?minCutZ:null,
+    maxCutZ:Number.isFinite(maxCutZ)?maxCutZ:null
   };
 }
 
