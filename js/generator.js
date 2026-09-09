@@ -22,7 +22,7 @@ export function buildJob(ops,s,tools,meta={}){
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.6)",
+    "(Version 0.5.7)",
     `(Generated: ${localTimestamp()} local computer time)`,
     `(Output file: ${(meta.fileName||"combined-masso-rapidchange").replace(/[()]/g,"")}.nc)`
   ];
@@ -100,6 +100,12 @@ export function buildJob(ops,s,tools,meta={}){
     out.push(`G53 G90 G0 X${Number(s.endX).toFixed(3)} Y${Number(s.endY).toFixed(3)}`);
   }
 
-  out.push("M30");
+  const projectTitle=(meta.fileName||"combined-masso-rapidchange")
+    .replace(/[()]/g,"")
+    .trim() || "combined-masso-rapidchange";
+
+  // Responsibility: Report successful completion after all final machine motion
+  // and spindle shutdown have occurred, immediately before program end.
+  out.push(`MSG Project ${projectTitle} has completed.`, "M30");
   return out.join("\n")+"\n";
 }

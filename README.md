@@ -1,6 +1,6 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-**Current version: v0.5.4**
+**Current version: v0.5.7**
 
 A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
@@ -8,10 +8,17 @@ Easel supplies the cutting path, spindle speed, feeds, depths, and geometry. The
 
 RapidChange ATC geometry and measurement logic remain in the existing MASSO macros installed by the RapidChange wizard. The web application calls those macros rather than reproducing their logic.
 
+## v0.5.7 update
+
+- The generated job now ends with a MASSO completion message using the output/project title: `Project <title> has completed.`
+- The completion message is emitted after final Z retraction, spindle shutdown, and final machine-coordinate X/Y positioning, immediately before `M30`.
+- Removed the extra explanatory startup sentence from the GUI; the two required operator reminders remain.
+- No changes were made to the v0.5.6 RapidChange sequencing or Easel toolpath handling.
+
 ## Current workflow
 
-1. Run the appropriate RapidChange Sync Pocket macro on MASSO.
-2. Confirm the physical spindle tool in the application.
+1. Set the X, Y, and Z workpiece origin in MASSO.
+2. Run the appropriate RapidChange Sync Pocket macro on MASSO so MASSO knows which tool is physically in the spindle.
 3. Import Easel `.nc` files.
 4. Assign each path a MASSO tool from `config/tools.json`.
 5. Order the operations.

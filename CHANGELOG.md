@@ -1,3 +1,11 @@
+## v0.5.7 — Completion message and GUI cleanup
+
+- Added a final MASSO completion message using the generated project/output title: `Project <title> has completed.`
+- The completion message occurs after final Z retraction, spindle shutdown, and final machine-coordinate X/Y positioning, immediately before `M30`.
+- Removed the explanatory operator-reminder sentence from the startup GUI while retaining the two required operator reminders.
+- Preserved all v0.5.6 machine behavior, RapidChange sequencing, Easel toolpath preservation, and job metadata behavior.
+- Updated the visible application version and README current-version label to v0.5.7.
+
 ## v0.5.6 — Simplified startup workflow and job metadata
 
 - Fixed the v0.5.5 UI regression that prevented loaded files from being reordered and assigned tools.
