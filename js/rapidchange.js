@@ -8,6 +8,15 @@ export function getRapidChangeCall(t){
   return `M98 P63${t}`;
 }
 
+export function getManualRapidChangeCall(t){
+  t=Number(t);
+  if(!Number.isInteger(t)||t<9||t>10)
+    throw Error(`Manual RapidChange tool must be 9-10; received ${t}.`);
+  // RapidChange uses the same P63<tool> subroutine naming convention for
+  // manual tools. MASSO therefore resolves T9/T10 to 639.nc/6310.nc.
+  return `M98 P63${t}`;
+}
+
 export function getToolMeasureCommand(t){
   return `T${Number(t)} M6`;
 }
@@ -62,18 +71,37 @@ export function manualToolBlock(t,s,info){
   const py=Number(s.parkY).toFixed(3);
   const pz=Number(s.parkZ).toFixed(3);
 
-  return [
-    "(===== MANUAL TOOL CHANGE =====)",
-    `(Manual Tool ${t}: ${info.name})`,
+  const a=[
+    "(===== RAPIDCHANGE MANUAL TOOL CHANGE =====)",
+    `(Acquire Manual Tool ${t}: ${info.name})`,
     "M5",
     "M9",
     "G04 P4000",
     `G53 G90 G0 Z${pz}`,
-    `G53 G90 G0 X${px} Y${py}`,
-    `MSG Remove dust shoe and install ${info.name}, then press Cycle Start`,
-    "M0",
-    `MSG Install dust shoe, then press Cycle Start`,
-    "M0",
-    "(===== END MANUAL TOOL CHANGE =====)"
-  ].join("\n");
+    `G53 G90 G0 X${px} Y${py}`
+  ];
+
+  if(s.dustShoeEnabled){
+    a.push(
+      "MSG Remove dust shoe, then press Cycle Start",
+      "M0"
+    );
+  }
+
+  a.push(
+    getManualRapidChangeCall(t),
+    "(--- Return to machine park after RapidChange manual-tool macro ---)",
+    `G53 G90 G0 Z${pz}`,
+    `G53 G90 G0 X${px} Y${py}`
+  );
+
+  if(s.dustShoeEnabled){
+    a.push(
+      "MSG Install dust shoe, then press Cycle Start",
+      "M0"
+    );
+  }
+
+  a.push("(===== END RAPIDCHANGE MANUAL TOOL CHANGE =====)");
+  return a.join("\n");
 }

@@ -1,7 +1,7 @@
 // Responsibility: Assemble ordered Easel operations while preserving the Easel
 // toolpath body exactly. The composer adds machine-level transitions around it.
 import {toolChangeBlock,manualToolBlock} from "./rapidchange.js";
-import {findFirstXYRapid} from "./parser.js";
+import {findFirstXYRapid,optimizeInitialSafeZ} from "./parser.js";
 
 function localTimestamp(){
   const d=new Date();
@@ -22,7 +22,7 @@ export function buildJob(ops,s,tools,meta={}){
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.7)",
+    "(Version 0.5.8)",
     `(Generated: ${localTimestamp()} local computer time)`,
     `(Output file: ${(meta.fileName||"combined-masso-rapidchange").replace(/[()]/g,"")}.nc)`
   ];
@@ -75,7 +75,7 @@ export function buildJob(ops,s,tools,meta={}){
 
     out.push(
       "(--- BEGIN UNCHANGED EASEL TOOLPATH ---)",
-      op.body,
+      optimizeInitialSafeZ(op.body),
       "(--- END UNCHANGED EASEL TOOLPATH ---)",
       `(===== END OPERATION ${i+1}: ${op.fileName} =====)`
     );

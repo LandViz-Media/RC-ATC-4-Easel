@@ -1,12 +1,19 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-**Current version: v0.5.7**
+**Current version: v0.5.8**
 
 A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
 Easel supplies the cutting path, spindle speed, feeds, depths, and geometry. The composer assigns each path to a MASSO tool and inserts only the machine-level transitions required to move between tools.
 
 RapidChange ATC geometry and measurement logic remain in the existing MASSO macros installed by the RapidChange wizard. The web application calls those macros rather than reproducing their logic.
+
+## v0.5.8 update
+
+- Optimized only the initial positive-Z safe-positioning move in each Easel path: the common `G1 Z0.20000 F9.0` positioning move is emitted as `G0 Z0.20000`. Actual plunge and cutting Z moves remain unchanged.
+- Added RapidChange manual-tool calls for T9 and T10 using the RapidChange P63<tool> subroutine convention (`M98 P639` and `M98 P6310`). The RapidChange-generated manual-tool macro remains responsible for unloading/loading/measuring the tool.
+- Manual-tool changes return to the configured machine park position after the RapidChange macro and retain the existing dust-shoe pause workflow.
+- Preserved all v0.5.7 completion-message, shutdown-order, startup-reminder, metadata, and automatic-tool behavior.
 
 ## v0.5.7 update
 

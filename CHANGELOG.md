@@ -1,23 +1,14 @@
-## v0.5.7 — Completion message and GUI cleanup
-
-- Added a final MASSO completion message using the generated project/output title: `Project <title> has completed.`
-- The completion message occurs after final Z retraction, spindle shutdown, and final machine-coordinate X/Y positioning, immediately before `M30`.
-- Removed the explanatory operator-reminder sentence from the startup GUI while retaining the two required operator reminders.
-- Preserved all v0.5.6 machine behavior, RapidChange sequencing, Easel toolpath preservation, and job metadata behavior.
-- Updated the visible application version and README current-version label to v0.5.7.
-
-## v0.5.6 — Simplified startup workflow and job metadata
-
-- Fixed the v0.5.5 UI regression that prevented loaded files from being reordered and assigned tools.
-- Combined the workpiece-origin and MASSO Sync Pocket instructions into a single reminder step with no checkbox or current-spindle-tool selector.
-- Added a job output file-name field; `.nc` is appended automatically.
-- Added an optional brief job description written as comments at the top of the generated `.nc` file.
-- Added a local computer/browser timestamp to the generated `.nc` header.
-- Preserved the v0.5.4 safe final shutdown order: retract Z, stop spindle, then move to final machine-coordinate X/Y.
-- Preserved Easel path commands and RapidChange macro calls.
-- Updated the visible application version to v0.5.6.
-
 # Change Log — Easel → MASSO RapidChange ATC Job Composer
+
+## v0.5.8 — Safe-Z positioning optimization and RapidChange manual tools
+
+- Optimized only the initial positive-Z, Z-only positioning move in each Easel operation. The common `G1 Z0.20000 F9.0` safe-height move is converted to `G0 Z0.20000` so the machine does not crawl from machine Z0 to the Easel safe height at a low plunge feed.
+- Actual cutting/plunge Z moves are not converted or otherwise modified.
+- Added RapidChange manual-tool subroutine calls for T9/T10 using `M98 P639` and `M98 P6310`, following the established `M98 P63<tool>` convention used by T1-T8.
+- The RapidChange manual-tool macro remains responsible for its own manual load, active-pocket, measurement, and `T# M6` sequence.
+- Manual-tool blocks return to the configured machine park position after the RapidChange macro and preserve the existing optional dust-shoe pauses.
+- Preserved the known-good v0.5.7 startup, automatic-tool, final shutdown, and completion-message behavior.
+
 
 ## v0.5.2 — Safe pre-positioning and MASSO operator messages
 
