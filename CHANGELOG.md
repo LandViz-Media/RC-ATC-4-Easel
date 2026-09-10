@@ -1,5 +1,15 @@
 # Change Log — Easel → MASSO RapidChange ATC Job Composer
 
+## v0.5.10 — RapidChange-owned measurement and machine configuration
+
+- Reworked the RapidChange transition so the existing `M98 P63<tool>` subroutine owns tool unloading/loading, pocket tracking, setter positioning, Auto Tool Zero, and `T# M6`.
+- Removed duplicate composer-side measurement commands for both automatic T1–T8 and manual T9–T10.
+- Removed hard-coded/configurable setter X/Y from the composer UI and browser settings. RapidChange/MASSO remains the source of truth for setter coordinates.
+- Removed the composer `G04 P4000` tool-change dwell; RapidChange controls its own internal timing.
+- Kept the v0.5.8 initial positive-Z `G0` optimization and all established final shutdown/startup behavior.
+- Dust-shoe reinstall messages now include a compact next-path identifier within MASSO's documented 34-character single-line `MSG` limit.
+- No changes were made to Easel cutting commands, spindle RPMs, feeds, depths, or geometry.
+
 ## v0.5.8 — Safe-Z positioning optimization and RapidChange manual tools
 
 - Optimized only the initial positive-Z, Z-only positioning move in each Easel operation. The common `G1 Z0.20000 F9.0` safe-height move is converted to `G0 Z0.20000` so the machine does not crawl from machine Z0 to the Easel safe height at a low plunge feed.

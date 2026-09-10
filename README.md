@@ -1,6 +1,6 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-**Current version: v0.5.8**
+**Current version: v0.5.10**
 
 A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
@@ -8,12 +8,14 @@ Easel supplies the cutting path, spindle speed, feeds, depths, and geometry. The
 
 RapidChange ATC geometry and measurement logic remain in the existing MASSO macros installed by the RapidChange wizard. The web application calls those macros rather than reproducing their logic.
 
-## v0.5.8 update
+## v0.5.10 update
 
-- Optimized only the initial positive-Z safe-positioning move in each Easel path: the common `G1 Z0.20000 F9.0` positioning move is emitted as `G0 Z0.20000`. Actual plunge and cutting Z moves remain unchanged.
-- Added RapidChange manual-tool calls for T9 and T10 using the RapidChange P63<tool> subroutine convention (`M98 P639` and `M98 P6310`). The RapidChange-generated manual-tool macro remains responsible for unloading/loading/measuring the tool.
-- Manual-tool changes return to the configured machine park position after the RapidChange macro and retain the existing dust-shoe pause workflow.
-- Preserved all v0.5.7 completion-message, shutdown-order, startup-reminder, metadata, and automatic-tool behavior.
+- Corrected the RapidChange integration architecture based on the RapidChange Masso G3 documentation supplied with this project. The composer now treats the RapidChange `M98 P63<tool>` subroutine as the owner of unloading/loading, pocket tracking, tool-setter positioning, Auto Tool Zero, and `T# M6`.
+- Removed the composer's duplicate tool-setter coordinates and measurement commands. Tool-setter X/Y are no longer stored in browser settings or emitted by the composer. RapidChange/MASSO remains the source of truth for those machine coordinates.
+- Removed the composer's fixed 4-second tool-change dwell. RapidChange controls its own tool-change timing and internal dwell behavior.
+- Preserved the successful v0.5.8 initial positive-Z safe-position optimization.
+- Kept the optional dust-shoe removal/reinstallation pauses. The reinstall message now includes a compact next-path identifier because MASSO `MSG` supports one displayed line of 34 characters.
+- Preserved the v0.5.7 completion message, final shutdown order, startup reminders, metadata, and ordered Easel toolpaths.
 
 ## v0.5.7 update
 
@@ -29,7 +31,7 @@ RapidChange ATC geometry and measurement logic remain in the existing MASSO macr
 3. Import Easel `.nc` files.
 4. Assign each path a MASSO tool from `config/tools.json`.
 5. Order the operations.
-6. Configure the machine-coordinate park/tool-setter positions and dust-shoe pauses.
+6. Configure the machine-coordinate park position and dust-shoe pauses. RapidChange owns the tool-setter position.
 7. Configure the desired end position/Z.
 8. Generate one combined `.nc` file.
 9. Inspect and air-test before cutting.
@@ -44,17 +46,15 @@ Current tools are T1–T8 automatic RapidChange tools and T9–T10 manual/custom
 
 ## Coordinates
 
-The park position and tool-setter position are **machine coordinates** and are emitted with `G53`.
+The composer emits the park position as machine coordinates with `G53`.
 
-Current tool-setter position:
-- X `0.315`
-- Y `0.273`
+The RapidChange tool-setter position is **not configured in this application**. RapidChange documentation requires the setter position to be configured in the RapidChange Web UI and corresponding MASSO Type 2 tool-changer settings; every tool, including manual tools, uses that configured setter position.
 
 ## Dust-shoe sequence
 
 For a tool change, the intended physical sequence is:
 
-finish path → raise/park → spindle stop → pause to remove shoe → RapidChange change → measure → return to park → pause to reinstall shoe → Start → Easel's own spindle startup → next path.
+finish path → raise/park → spindle stop → pause to remove shoe → RapidChange change/measurement → return to park → pause to reinstall shoe → Start → Easel's own spindle startup → next path.
 
 The application does not impose a global spindle speed; Easel's own RPM and feed values are preserved.
 

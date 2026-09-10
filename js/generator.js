@@ -22,7 +22,7 @@ export function buildJob(ops,s,tools,meta={}){
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.8)",
+    "(Version 0.5.10)",
     `(Generated: ${localTimestamp()} local computer time)`,
     `(Output file: ${(meta.fileName||"combined-masso-rapidchange").replace(/[()]/g,"")}.nc)`
   ];
@@ -33,7 +33,7 @@ export function buildJob(ops,s,tools,meta={}){
     "G80",
     "G90",
     "G54",
-    "MSG Confirm X, Y, and Z workpiece origin is set, then press Cycle Start",
+    "MSG Confirm X/Y/Z origin; Cycle Start",
     "M0",
     "(Before running: run the appropriate RapidChange Sync Pocket macro so MASSO knows the physical spindle tool.)"
   );
@@ -55,7 +55,7 @@ export function buildJob(ops,s,tools,meta={}){
     );
 
     if(previous!==tool){
-      out.push(info.automatic?toolChangeBlock(tool,s,info):manualToolBlock(tool,s,info));
+      out.push(info.automatic?toolChangeBlock(tool,s,info,op.fileName):manualToolBlock(tool,s,info,op.fileName));
     }else{
       out.push("(Tool already in spindle - no tool change)");
     }

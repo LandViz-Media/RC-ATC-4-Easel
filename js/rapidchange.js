@@ -1,5 +1,6 @@
-// Responsibility: Call the existing RapidChange/MASSO macros.
-// ATC geometry, pocket positions, unloading/loading, and measurement remain on MASSO.
+// Responsibility: Call the existing RapidChange/MASSO macros and handle only
+// composer-level park/dust-shoe transitions. RapidChange owns pocket geometry,
+// manual load/unload, tool measurement, and tool-number state.
 
 export function getRapidChangeCall(t){
   t=Number(t);
@@ -12,96 +13,87 @@ export function getManualRapidChangeCall(t){
   t=Number(t);
   if(!Number.isInteger(t)||t<9||t>10)
     throw Error(`Manual RapidChange tool must be 9-10; received ${t}.`);
-  // RapidChange uses the same P63<tool> subroutine naming convention for
-  // manual tools. MASSO therefore resolves T9/T10 to 639.nc/6310.nc.
+  // RapidChange generates one numbered subroutine for each tool. The Masso G3
+  // integration documents the P63<tool> convention, including manual tools.
   return `M98 P63${t}`;
 }
 
-export function getToolMeasureCommand(t){
-  return `T${Number(t)} M6`;
+function cleanPathName(name){
+  return String(name||"").replace(/\.nc$/i,"").replace(/[()]/g,"").trim() || "path";
 }
 
-export function toolChangeBlock(t,s,info){
+// MASSO MSG is limited to one displayed line of 34 characters. Keep the
+// operator instruction and a short path identifier together rather than
+// emitting two MSG commands that would overwrite one another.
+function installShoeMessage(pathName){
+  const prefix="MSG Shoe on; Cycle Start; ";
+  const max=34-prefix.length;
+  const path=cleanPathName(pathName);
+  const shown=path.slice(0,max);
+  return prefix+shown;
+}
+
+function transitionStart(t,info,s){
   const px=Number(s.parkX).toFixed(3);
   const py=Number(s.parkY).toFixed(3);
   const pz=Number(s.parkZ).toFixed(3);
-  const sx=Number(s.setterX).toFixed(3);
-  const sy=Number(s.setterY).toFixed(3);
-
   const a=[
     "(===== RAPIDCHANGE TOOL CHANGE =====)",
     `(Acquire Tool ${t}: ${info.name})`,
     "M5",
     "M9",
-    "G04 P4000",
     `G53 G90 G0 Z${pz}`,
     `G53 G90 G0 X${px} Y${py}`
   ];
-
   if(s.dustShoeEnabled){
     a.push(
-      `MSG Remove dust shoe, then press Cycle Start`,
+      "MSG Remove shoe; Cycle Start",
       "M0"
     );
   }
-
-  a.push(
-    getRapidChangeCall(t),
-    "(--- Measure Tool ---)",
-    `G53 G90 G0 Z${pz}`,
-    `G53 G90 G0 X${sx} Y${sy}`,
-    getToolMeasureCommand(t),
-    `G53 G90 G0 Z${pz}`,
-    `G53 G90 G0 X${px} Y${py}`
-  );
-
-  if(s.dustShoeEnabled){
-    a.push(
-      `MSG Install dust shoe, then press Cycle Start`,
-      "M0"
-    );
-  }
-
-  a.push("(===== END RAPIDCHANGE TOOL CHANGE =====)");
-  return a.join("\n");
+  return a;
 }
 
-export function manualToolBlock(t,s,info){
+function transitionEnd(s,pathName){
   const px=Number(s.parkX).toFixed(3);
   const py=Number(s.parkY).toFixed(3);
   const pz=Number(s.parkZ).toFixed(3);
-
   const a=[
-    "(===== RAPIDCHANGE MANUAL TOOL CHANGE =====)",
-    `(Acquire Manual Tool ${t}: ${info.name})`,
-    "M5",
-    "M9",
-    "G04 P4000",
+    "(--- Return to machine park after RapidChange macro ---)",
     `G53 G90 G0 Z${pz}`,
     `G53 G90 G0 X${px} Y${py}`
   ];
-
   if(s.dustShoeEnabled){
     a.push(
-      "MSG Remove dust shoe, then press Cycle Start",
+      installShoeMessage(pathName),
       "M0"
     );
   }
+  return a;
+}
 
+export function toolChangeBlock(t,s,info,pathName){
+  const a=transitionStart(t,info,s);
   a.push(
-    getManualRapidChangeCall(t),
-    "(--- Return to machine park after RapidChange manual-tool macro ---)",
-    `G53 G90 G0 Z${pz}`,
-    `G53 G90 G0 X${px} Y${py}`
+    // RapidChange owns unloading/loading, setter positioning, Auto Tool Zero,
+    // and T# M6. Do not duplicate any of that logic here.
+    getRapidChangeCall(t),
+    ...transitionEnd(s,pathName),
+    "(===== END RAPIDCHANGE TOOL CHANGE =====)"
   );
+  return a.join("\n");
+}
 
-  if(s.dustShoeEnabled){
-    a.push(
-      "MSG Install dust shoe, then press Cycle Start",
-      "M0"
-    );
-  }
-
-  a.push("(===== END RAPIDCHANGE MANUAL TOOL CHANGE =====)");
+export function manualToolBlock(t,s,info,pathName){
+  const a=transitionStart(t,info,s);
+  a[0]="(===== RAPIDCHANGE MANUAL TOOL CHANGE =====)";
+  a[1]=`(Acquire Manual Tool ${t}: ${info.name})`;
+  a.push(
+    // RapidChange owns the manual-tool prompt, manual position, pocket-state
+    // handling, setter position, measurement, and T# M6 sequence.
+    getManualRapidChangeCall(t),
+    ...transitionEnd(s,pathName),
+    "(===== END RAPIDCHANGE MANUAL TOOL CHANGE =====)"
+  );
   return a.join("\n");
 }

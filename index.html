@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Easel → MASSO RapidChange ATC Job Composer v0.5.8</title>
+<title>Easel → MASSO RapidChange ATC Job Composer v0.5.10</title>
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body><main class="app">
-<header><div class="version">v0.5.8</div><h1>Easel → MASSO RapidChange ATC Job Composer</h1><p>Combine single-tool Easel G-code files into one ordered RapidChange-aware MASSO job.</p></header>
+<header><div class="version">v0.5.10</div><h1>Easel → MASSO RapidChange ATC Job Composer</h1><p>Combine single-tool Easel G-code files into one ordered RapidChange-aware MASSO job.</p></header>
 
 <section class="panel"><h2>1. Before you begin</h2>
 <p class="hint"><strong>Set the workpiece origin:</strong> Set the X, Y, and Z workpiece origin in MASSO for this job.</p>
@@ -31,9 +31,8 @@
 <label>Park X (machine)<input id="parkX" type="number" step=".001"></label>
 <label>Park Y (machine)<input id="parkY" type="number" step=".001"></label>
 <label>ATC Park Z (machine)<input id="parkZ" type="number" step=".001"><small>Default 0.000 = top of Z travel. More negative values (for example -1.000) are possible when needed.</small></label>
-<label>Tool setter X (machine)<input id="setterX" type="number" step=".001"></label>
-<label>Tool setter Y (machine)<input id="setterY" type="number" step=".001"></label>
 </div>
+<p class="hint">RapidChange owns the tool-setter position and tool measurement. The composer does not store or emit setter X/Y coordinates.</p>
 <label class="checkbox"><input id="dustShoeEnabled" type="checkbox"> Pause for dust-shoe removal/reinstallation</label>
 </section>
 

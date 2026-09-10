@@ -39,7 +39,7 @@ file.onchange=async e=>{
   e.target.value="";
 };
 
-["parkX","parkY","parkZ","setterX","setterY","dustShoeEnabled","endMode","endX","endY","endZOverrideEnabled","endZ"].forEach(id=>{
+["parkX","parkY","parkZ","dustShoeEnabled","endMode","endX","endY","endZOverrideEnabled","endZ"].forEach(id=>{
   const e=$("#"+id);
   e.value=S.settings[id];
   if(e.type==="checkbox")e.checked=!!S.settings[id];
