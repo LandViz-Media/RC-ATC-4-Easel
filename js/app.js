@@ -4,19 +4,25 @@ import {buildJob} from "./generator.js";
 import {loadSettings,saveSettings} from "./settings.js";
 import {renderOperations} from "./ui.js";
 
-const S={operations:[],settings:loadSettings(),tools:[]};
+const S={operations:[],settings:loadSettings(),tools:[],manualTools:[]};
 const $=s=>document.querySelector(s);
 const file=$("#fileInput"), list=$("#operationList"), gen=$("#generateButton"), status=$("#status");
 
 async function loadTools(){
-  const r=await fetch("./config/tools.json",{cache:"no-store"});
-  if(!r.ok) throw Error(`Unable to load config/tools.json (${r.status}).`);
-  S.tools=(await r.json()).tools;
-  if(!S.tools?.length) throw Error("No tools found.");
+  const [tr,mr]=await Promise.all([
+    fetch("./config/tools.json",{cache:"no-store"}),
+    fetch("./config/manual-tools.json",{cache:"no-store"})
+  ]);
+  if(!tr.ok) throw Error(`Unable to load config/tools.json (${tr.status}).`);
+  if(!mr.ok) throw Error(`Unable to load config/manual-tools.json (${mr.status}).`);
+  S.tools=(await tr.json()).tools;
+  S.manualTools=(await mr.json()).tools;
+  if(!S.tools?.length) throw Error("No MASSO tools found.");
+  if(!S.manualTools?.length) throw Error("No manual tools found.");
 }
 
 function refresh(){
-  renderOperations(list,S.operations,S.tools,{
+  renderOperations(list,S.operations,S.tools,S.manualTools,{
     onChange:(i,p)=>{Object.assign(S.operations[i],p);refresh()},
     onRemove:i=>{S.operations.splice(i,1);refresh()},
     onMove:(i,d)=>{
@@ -32,7 +38,7 @@ function refresh(){
 file.onchange=async e=>{
   for(const f of e.target.files){
     const text=await f.text();
-    S.operations.push({fileName:f.name,body:stripEaselFooter(parseEaselFile(text).body),tool:1});
+    S.operations.push({fileName:f.name,body:stripEaselFooter(parseEaselFile(text).body),tool:1,manualToolId:"BIT-001"});
   }
   status.textContent=`Loaded ${S.operations.length} operation(s). Assign each operation a MASSO tool.`;
   refresh();
@@ -64,7 +70,7 @@ gen.onclick=()=>{
   try{
     const fileBase=$("#outputFileName").value.trim().replace(/\.nc$/i,"")||"combined-masso-rapidchange";
     const description=$("#jobDescription").value.trim();
-    const g=buildJob(S.operations,S.settings,S.tools,{fileName:fileBase,description});
+    const g=buildJob(S.operations,S.settings,S.tools,S.manualTools,{fileName:fileBase,description});
     const u=URL.createObjectURL(new Blob([g],{type:"text/plain"}));
     const a=document.createElement("a");
     a.href=u;

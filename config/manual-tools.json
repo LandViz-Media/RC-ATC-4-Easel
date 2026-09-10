@@ -1,0 +1,11 @@
+{
+  "tools": [
+    {"toolId":"BIT-001","shaftDiameter":0.125,"cuttingSize":0.125,"type":"DC","note":""},
+    {"toolId":"BIT-002","shaftDiameter":0.125,"cuttingSize":0.125,"type":"UC","note":""},
+    {"toolId":"BIT-003","shaftDiameter":0.25,"cuttingSize":null,"type":"V-Bit","note":"60°"},
+    {"toolId":"BIT-004","shaftDiameter":0.25,"cuttingSize":null,"type":"V-Bit","note":"90°"},
+    {"toolId":"BIT-005","shaftDiameter":0.25,"cuttingSize":0.0625,"type":"DC","note":""},
+    {"toolId":"BIT-006","shaftDiameter":0.25,"cuttingSize":0.125,"type":"DC","note":"Long Reach"},
+    {"toolId":"BIT-007","shaftDiameter":0.25,"cuttingSize":0.125,"type":"UC","note":"Long Reach"}
+  ]
+}

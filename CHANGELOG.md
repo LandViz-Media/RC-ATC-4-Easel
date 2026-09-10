@@ -1,5 +1,12 @@
 # Change Log — Easel → MASSO RapidChange ATC Job Composer
 
+## v0.5.12 — Manual-to-manual advance guidance
+
+- Added composer-side advance guidance when one manual tool is followed by a different manual tool.
+- The generated job pauses before the existing RapidChange `M98 P63<tool>` call and identifies the upcoming manual tool, e.g. `MSG After T9: Load T10 90V; Start`.
+- The message is informational/advance guidance; RapidChange continues to own the actual manual unload/load sequence, manual position, measurement, pocket tracking, and `T# M6`.
+- No RapidChange (`RC`) macro files were modified.
+
 ## v0.5.10 — RapidChange-owned measurement and machine configuration
 
 - Reworked the RapidChange transition so the existing `M98 P63<tool>` subroutine owns tool unloading/loading, pocket tracking, setter positioning, Auto Tool Zero, and `T# M6`.

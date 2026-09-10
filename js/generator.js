@@ -13,16 +13,17 @@ function commentLines(text){
   return String(text||"").split(/\r?\n/).map(x=>`(${x.replace(/[()]/g,"")})`).join("\n");
 }
 
-export function buildJob(ops,s,tools,meta={}){
+export function buildJob(ops,s,tools,manualTools,meta={}){
   if(!ops.length) throw Error("Add at least one .nc file.");
 
   const get=n=>tools.find(t=>t.number===Number(n));
+  const getManual=id=>manualTools.find(t=>t.toolId===id);
   const pz=Number(s.parkZ);
   if(!Number.isFinite(pz)) throw Error("ATC Park Z must be a valid machine-coordinate value.");
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.10)",
+    "(Version 0.5.12)",
     `(Generated: ${localTimestamp()} local computer time)`,
     `(Output file: ${(meta.fileName||"combined-masso-rapidchange").replace(/[()]/g,"")}.nc)`
   ];
@@ -47,15 +48,23 @@ export function buildJob(ops,s,tools,meta={}){
     const tool=Number(op.tool);
     const info=get(tool);
     if(!info) throw Error(`Operation ${i+1} has invalid tool ${op.tool}.`);
+    const manual=getManual(op.manualToolId||"BIT-001");
+    if(!info.automatic&&!manual) throw Error(`Operation ${i+1} has invalid manual tool ${op.manualToolId||"(none)"}.`);
+
+    const nextOp=ops[i+1];
+    const nextTool=nextOp?Number(nextOp.tool):null;
+    const nextInfo=Number.isInteger(nextTool)?get(nextTool):null;
+    const nextManual=(nextInfo&&!nextInfo.automatic)?getManual(nextOp.manualToolId||"BIT-001"):null;
 
     out.push(
       "",
       `(===== START OPERATION ${i+1}: ${op.fileName} =====)`,
-      `(Assigned MASSO Tool ${tool}: ${info.name})`
+      `(Assigned MASSO Tool ${tool}: ${info.name})`,
+      ...(info.automatic?[]:[`(Manual cutter ${manual.toolId}: ${manual.shaftDiameter} in shaft, ${manual.cuttingSize===null?"N/A":manual.cuttingSize+" in cutting size"}, ${manual.type}${manual.note?`, ${manual.note}`:""})`])
     );
 
     if(previous!==tool){
-      out.push(info.automatic?toolChangeBlock(tool,s,info,op.fileName):manualToolBlock(tool,s,info,op.fileName));
+      out.push(info.automatic?toolChangeBlock(tool,s,info,op.fileName):manualToolBlock(tool,s,info,op.fileName,manual,nextInfo,nextManual));
     }else{
       out.push("(Tool already in spindle - no tool change)");
     }

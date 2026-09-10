@@ -26,7 +26,7 @@ function cleanPathName(name){
 // operator instruction and a short path identifier together rather than
 // emitting two MSG commands that would overwrite one another.
 function installShoeMessage(pathName){
-  const prefix="MSG Shoe on; Cycle Start; ";
+  const prefix="MSG Shoe on; Start; ";
   const max=34-prefix.length;
   const path=cleanPathName(pathName);
   const shown=path.slice(0,max);
@@ -84,10 +84,29 @@ export function toolChangeBlock(t,s,info,pathName){
   return a.join("\n");
 }
 
-export function manualToolBlock(t,s,info,pathName){
+function manualAdvanceMessage(currentTool,nextTool,nextManual){
+  if(!nextTool||!nextManual) return null;
+
+  // Advance guidance only. RapidChange still owns the actual manual unload/load
+  // pause, manual position, setter, measurement, and T# M6 sequence.
+  // Keep the operator message within MASSO's documented 34-character limit.
+  const note=String(nextManual.note||"").replace(/\s*°\s*/g,"°");
+  const detail=note ? ` ${note}` : "";
+  const full=`MSG After T${currentTool}: Load T${nextTool}${detail}; Start`;
+  if(full.length<=34) return full;
+  return `MSG After T${currentTool}: Load T${nextTool}; Start`;
+}
+
+export function manualToolBlock(t,s,info,pathName,manual=null,nextInfo=null,nextManual=null){
   const a=transitionStart(t,info,s);
   a[0]="(===== RAPIDCHANGE MANUAL TOOL CHANGE =====)";
-  a[1]=`(Acquire Manual Tool ${t}: ${info.name})`;
+  a[1]=`(Acquire Manual Tool ${t}: ${manual?.toolId||"unknown"}${manual?`: ${manual.type}${manual.note?` - ${manual.note}`:""}`:""})`;
+
+  const advance=manualAdvanceMessage(t,nextInfo?.number,nextManual);
+  if(advance){
+    a.push(advance,"M0");
+  }
+
   a.push(
     // RapidChange owns the manual-tool prompt, manual position, pocket-state
     // handling, setter position, measurement, and T# M6 sequence.

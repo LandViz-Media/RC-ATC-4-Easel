@@ -1,6 +1,6 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-**Current version: v0.5.10**
+**Current version: v0.5.12**
 
 A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
@@ -16,6 +16,15 @@ RapidChange ATC geometry and measurement logic remain in the existing MASSO macr
 - Preserved the successful v0.5.8 initial positive-Z safe-position optimization.
 - Kept the optional dust-shoe removal/reinstallation pauses. The reinstall message now includes a compact next-path identifier because MASSO `MSG` supports one displayed line of 34 characters.
 - Preserved the v0.5.7 completion message, final shutdown order, startup reminders, metadata, and ordered Easel toolpaths.
+
+## v0.5.12 update
+
+- Added `config/manual-tools.json` as a small working inventory/catalog for manual tools T9/T10.
+- Added seven starter cutters using `toolId`, `shaftDiameter`, `cuttingSize`, `type`, and `note`; V-bit cutting size is represented as `null`.
+- Manual-tool operations now provide a second dropdown for selecting a cutter from the manual-tool catalog.
+- Manual cutter identity is preserved in generated G-code comments without changing RapidChange macro behavior.
+- Shortened the dust-shoe reinstall message from `Cycle Start` to `Start` so more of the upcoming Easel filename can be displayed: `MSG Shoe on; Start; <filename>`.
+- Preserved the v0.5.10 machine-tested RapidChange sequencing and composer-side measurement/configuration boundaries.
 
 ## v0.5.7 update
 
@@ -41,6 +50,8 @@ Consecutive operations using the same tool do not cause an unnecessary tool chan
 ## Tool configuration
 
 `config/tools.json` is the editable tool inventory. The application reads it at startup and displays `Tool #: Name` in the operation dropdown.
+
+`config/manual-tools.json` is the small working catalog used when T9 or T10 is assigned. It is intentionally separate from the T1–T8 RapidChange slot definitions for now; a future inventory manager may unify physical cutter inventory and slot assignment.
 
 Current tools are T1–T8 automatic RapidChange tools and T9–T10 manual/custom tools.
 
