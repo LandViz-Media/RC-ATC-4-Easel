@@ -1,5 +1,15 @@
 # RC-ATC for Easel — Preview UI Prototype
 
+## v0.3.10 — Project-order tool palette and cyan navigation markers
+
+- Replaced tool-number-based colors with a fixed ten-color palette. Colors are assigned to unique tools in the order they first appear in the current project, so color identifies the tool within the project rather than a permanent tool number.
+- Palette: Black, Vibrant Orange, Purple Heart, Deep Teal, Vermillion, Reddish Purple, Goldenrod, Blue Charcoal, Copper Brown, and Bluish Green.
+- Reserved cyan (`#00FFFF`) for rapid movement and start/end navigation markers.
+- Rapid moves are rendered as cyan dashed lines.
+- Start markers are cyan-filled circles with black outlines. End markers are cyan-filled triangles with black outlines.
+- The same project-order tool-color assignment is used by combined toolpaths and tool filter controls.
+- Preserved the successful v0.3.9 file removal/re-add behavior, ordering, measurement summaries, cutting envelopes, rulers, and colorblind-safe design.
+
 ## v0.3.9 — Measurement and Marker Refinements
 
 - Changed the start marker to a black circle and the end marker to a black triangle for stronger visual distinction without relying on red/green color.

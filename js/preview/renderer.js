@@ -1,21 +1,38 @@
 // Responsibility: Render top-down CNC toolpaths for thumbnails and detailed/combined previews.
 // This is a visual aid only and does not execute or generate machine G-code.
 //
-// v0.3.9: visual measurement refinements, including start/end marker updates,
-// next-major-tick ruler extension, and explicit cutting-vs-rapid envelopes.
+// v0.3.10: visual measurement refinements plus project-order tool colors and
+// cyan rapid/start/end navigation markers.
 
-const TOOL_COLORS = {
-  1:"#111111", // black
-  2:"#2563eb", // blue
-  3:"#ea580c", // orange
-  4:"#16a34a", // green
-  5:"#db2777", // pink
-  6:"#0891b2", // turquoise
-  7:"#111111", // repeat black
-  8:"#2563eb", // repeat blue
-  9:"#ea580c", // repeat orange
-  10:"#16a34a" // repeat green
-};
+const TOOL_COLORS = [
+  "#000000", // 1. Black
+  "#E69F00", // 2. Vibrant Orange
+  "#6C29D0", // 3. Purple Heart
+  "#0072B2", // 4. Deep Teal
+  "#D55E00", // 5. Vermillion
+  "#CC79A7", // 6. Reddish Purple
+  "#F0E442", // 7. Goldenrod
+  "#1C2D37", // 8. Blue Charcoal
+  "#882255", // 9. Copper Brown
+  "#009E73"  // 10. Bluish Green
+];
+
+const RAPID_COLOR="#00FFFF";
+
+function getToolColorMap(entries){
+  const map=new Map();
+  for(const e of entries||[]){
+    const t=Number(e.tool);
+    if(!Number.isInteger(t)||map.has(t)) continue;
+    map.set(t,TOOL_COLORS[map.size] || "#000000");
+  }
+  return map;
+}
+
+function getToolColor(tool,entries){
+  const map=getToolColorMap(entries);
+  return map.get(Number(tool)) || "#000000";
+}
 
 function cuttingBounds(parsed){
   if(parsed?.cuttingBounds) return parsed.cuttingBounds;
@@ -53,7 +70,7 @@ function mapFactory(bounds,width,height,showRulers=false){
 }
 
 function drawLine(ctx,a,b,dash=false,stroke='#222222'){
-  ctx.save(); ctx.strokeStyle=dash?'#888888':stroke; ctx.lineWidth=2;
+  ctx.save(); ctx.strokeStyle=dash?RAPID_COLOR:stroke; ctx.lineWidth=2;
   if(dash)ctx.setLineDash([6,8]);
   ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.restore();
 }
@@ -117,10 +134,14 @@ function drawParsed(ctx,parsed,map,opts){
     } else drawArc(ctx,m,map,stroke);
   }
   if(opts.showStart&&parsed.firstXY){
-    const q=map.point(parsed.firstXY);ctx.save();ctx.fillStyle='#111111';ctx.beginPath();ctx.arc(q.x,q.y,6,0,Math.PI*2);ctx.fill();ctx.restore();
+    const q=map.point(parsed.firstXY);
+    ctx.save();ctx.fillStyle=RAPID_COLOR;ctx.strokeStyle='#000000';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(q.x,q.y,7,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore();
   }
   if(opts.showEnd&&parsed.lastXY){
-    const q=map.point(parsed.lastXY);ctx.save();ctx.fillStyle='#111111';ctx.beginPath();ctx.moveTo(q.x,q.y-8);ctx.lineTo(q.x+8,q.y+6);ctx.lineTo(q.x-8,q.y+6);ctx.closePath();ctx.fill();ctx.restore();
+    const q=map.point(parsed.lastXY);
+    ctx.save();ctx.fillStyle=RAPID_COLOR;ctx.strokeStyle='#000000';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(q.x,q.y-9);ctx.lineTo(q.x+9,q.y+7);ctx.lineTo(q.x-9,q.y+7);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
   }
 }
 
@@ -137,9 +158,10 @@ function renderCombined(canvas,entries,visibleTools,opts={}){
   const active=entries.filter(e=>e.parsed&&e.parsed.bounds&&visibleTools.has(Number(e.tool)));
   if(!active.length){ctx.fillStyle='#777';ctx.font='18px system-ui';ctx.textAlign='center';ctx.fillText('No assigned toolpaths are selected for display.',w/2,h/2-12);ctx.fillText('Assign tools to operations, then turn on the tools you want to see.',w/2,h/2+16);return;}
   const bounds=combinedCuttingBounds(active);if(!bounds)return;
+  const toolColorMap=getToolColorMap(active);
   const showRulers=opts.showRulers===true,map=mapFactory(bounds,w,h,showRulers);
   if(showRulers)drawRulers(ctx,map);if(opts.showAxes)drawAxes(ctx,map);
-  active.forEach(e=>drawParsed(ctx,e.parsed,map,{showRapid:opts.showRapid!==false,showStart:opts.showStart===true,showEnd:opts.showEnd===true,stroke:TOOL_COLORS[Number(e.tool)]||'#222222'}));
+  active.forEach(e=>drawParsed(ctx,e.parsed,map,{showRapid:opts.showRapid!==false,showStart:opts.showStart===true,showEnd:opts.showEnd===true,stroke:toolColorMap.get(Number(e.tool))||'#000000'}));
 }
 
-window.NCPreviewRenderer={render,renderCombined,TOOL_COLORS};
+window.NCPreviewRenderer={render,renderCombined,TOOL_COLORS,RAPID_COLOR,getToolColorMap,getToolColor};

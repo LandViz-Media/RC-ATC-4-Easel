@@ -108,7 +108,7 @@ body{margin:0}main{max-width:1200px;margin:0 auto;padding:28px}header{margin-bot
 .tool-legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin:8px 0 12px;font-size:.9rem}
 .legend-item{display:inline-flex;align-items:center;gap:5px}.legend-swatch{width:11px;height:11px;border-radius:50%;display:inline-block}
 
-/* v0.3.8: identify combined-preview tools directly on their visibility controls.
+/* v0.3.10: identify combined-preview tools directly on their visibility controls.
    The text label and tool number remain visible so color is never the sole identifier. */
 .tool-filter{
   border-bottom:4px solid var(--tool-color, #111111);
@@ -117,7 +117,7 @@ body{margin:0}main{max-width:1200px;margin:0 auto;padding:28px}header{margin-bot
   border-bottom-color:var(--tool-color, #111111);
 }
 
-/* v0.3.9 measurement summary.
+/* v0.3.10 measurement summary.
    Responsibility: present machine-relevant workpiece requirements without replacing the visual preview. */
 .requirements{margin-top:8px;padding:8px 10px;border-left:3px solid #777;background:#fafafa;font-size:.82rem;line-height:1.45}
 .requirements .muted{color:#777}

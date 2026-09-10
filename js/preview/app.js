@@ -1,4 +1,4 @@
-// RC-ATC Preview UI v0.3.9
+// RC-ATC Preview UI v0.3.10
 // Responsibility: Manage operation files, tool assignment, ordering, hover details,
 // and optional detailed/combined previews. This prototype does not generate G-code.
 
@@ -343,7 +343,7 @@ function renderCombined(){
     input.checked=visibleTools.has(t);
     input.dataset.tool=t;
 
-    label.style.setProperty("--tool-color", NCPreviewRenderer.TOOL_COLORS[t] || "#111111");
+    label.style.setProperty("--tool-color", NCPreviewRenderer.getToolColor(t, operations.map(o=>({tool:o.tool}))));
     label.append(input,document.createTextNode(" "+toolName(t)));
     filters.append(label);
 
