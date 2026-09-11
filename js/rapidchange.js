@@ -33,7 +33,7 @@ function installShoeMessage(pathName){
   return prefix+shown;
 }
 
-function transitionStart(t,info,s,nextInfo=null,nextManual=null){
+function transitionStart(t,info,s,isFirstOperation=false,manual=null){
   const px=Number(s.parkX).toFixed(3);
   const py=Number(s.parkY).toFixed(3);
   const pz=Number(s.parkZ).toFixed(3);
@@ -45,12 +45,15 @@ function transitionStart(t,info,s,nextInfo=null,nextManual=null){
     `G53 G90 G0 Z${pz}`,
     `G53 G90 G0 X${px} Y${py}`
   ];
-  if(s.dustShoeEnabled){
+  if(s.dustShoeEnabled && !isFirstOperation){
     let message="MSG Shoe off; Start";
-    if(nextInfo && !nextInfo.automatic && nextManual){
-      const shortName=String(nextManual.shortName||"").trim();
-      if(shortName && shortName.length<=14){
-        message=`MSG Shoe off; Next T${nextInfo.number}: ${shortName}`;
+    // For operation 1 the shoe should remain on; there is no prior tool-change
+    // transition to prepare for. On later operations, identify a manual tool
+    // being acquired by this transition.
+    if(!info.automatic && manual){
+      const shortName=String(manual.shortName||"").trim();
+      if(shortName && shortName.length<=10){
+        message=`MSG Shoe off; Next T${t}: ${shortName}`;
       }
     }
     a.push(message,"M0");
@@ -76,8 +79,8 @@ function transitionEnd(s,pathName){
   return a;
 }
 
-export function toolChangeBlock(t,s,info,pathName,nextInfo=null,nextManual=null){
-  const a=transitionStart(t,info,s,nextInfo,nextManual);
+export function toolChangeBlock(t,s,info,pathName,isFirstOperation=false,manual=null){
+  const a=transitionStart(t,info,s,isFirstOperation,manual);
   a.push(
     // RapidChange owns unloading/loading, setter positioning, Auto Tool Zero,
     // and T# M6. Do not duplicate any of that logic here.
@@ -88,8 +91,8 @@ export function toolChangeBlock(t,s,info,pathName,nextInfo=null,nextManual=null)
   return a.join("\n");
 }
 
-export function manualToolBlock(t,s,info,pathName,manual=null,nextInfo=null,nextManual=null){
-  const a=transitionStart(t,info,s,nextInfo,nextManual);
+export function manualToolBlock(t,s,info,pathName,manual=null,isFirstOperation=false){
+  const a=transitionStart(t,info,s,isFirstOperation,manual);
   a[0]="(===== RAPIDCHANGE MANUAL TOOL CHANGE =====)";
   a[1]=`(Acquire Manual Tool ${t}: ${manual?.toolId||"unknown"}${manual?`: ${manual.type}${manual.note?` - ${manual.note}`:""}`:""})`;
 

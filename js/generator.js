@@ -23,7 +23,7 @@ export function buildJob(ops,s,tools,manualTools,meta={}){
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.13)",
+    "(Version 0.5.14)",
     `(Generated: ${localTimestamp()} local computer time)`,
     `(Output file: ${(meta.fileName||"combined-masso-rapidchange").replace(/[()]/g,"")}.nc)`
   ];
@@ -70,7 +70,11 @@ export function buildJob(ops,s,tools,manualTools,meta={}){
     );
 
     if(previous!==tool){
-      out.push(info.automatic?toolChangeBlock(tool,s,info,op.fileName,nextInfo,nextManual):manualToolBlock(tool,s,info,op.fileName,manual,nextInfo,nextManual));
+      // The shoe-off message belongs to the tool-change transition itself.
+      // It identifies the tool that is about to be acquired, not the tool
+      // after the current operation. Suppress the guidance on operation 1
+      // because there is no prior tool being removed.
+      out.push(info.automatic?toolChangeBlock(tool,s,info,op.fileName,i===0,manual):manualToolBlock(tool,s,info,op.fileName,manual,i===0));
     }else{
       out.push("(Tool already in spindle - no tool change)");
     }

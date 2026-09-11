@@ -1,6 +1,15 @@
 # Change Log — Easel → MASSO RapidChange ATC Job Composer
 
-## v0.5.13 — Manual-tool shoe-off guidance and short names
+## v0.5.14 — Correct manual-tool message timing
+
+- Corrected the shoe-off guidance so it identifies the manual tool being acquired by the current tool-change transition, not the manual tool after the current operation.
+- The first operation no longer receives next-tool guidance; the message appears only when the operator is actually preparing for a subsequent tool change.
+- Suppressed the shoe-off pause and next-manual-tool guidance on the first operation; the shoe remains on for the initial tool acquisition.
+- Short-name capacity is limited to 10 characters so the full T10 shoe-off message remains within MASSO's 34-character MSG limit.
+- Preserved the existing RapidChange `M98 P63<tool>` calls and all RC macro behavior.
+- No RapidChange (`RC`) macro files were modified.
+
+## v0.5.14 — Manual-tool shoe-off guidance and short names
 
 - Added `name` and `shortName` to the manual-tool catalog.
 - Full `name` is used in the composer UI; `shortName` is limited to 14 characters for MASSO messages.

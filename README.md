@@ -1,6 +1,6 @@
 # Easel → MASSO RapidChange ATC Job Composer
 
-**Current version: v0.5.13**
+**Current version: v0.5.14**
 
 A browser-based utility for combining individual Easel CNC `.nc` files into one ordered job for a Onefinity Elite / MASSO controller / RapidChange ATC.
 
@@ -17,14 +17,10 @@ RapidChange ATC geometry and measurement logic remain in the existing MASSO macr
 - Kept the optional dust-shoe removal/reinstallation pauses. The reinstall message now includes a compact next-path identifier because MASSO `MSG` supports one displayed line of 34 characters.
 - Preserved the v0.5.7 completion message, final shutdown order, startup reminders, metadata, and ordered Easel toolpaths.
 
-## v0.5.13 update
-
 - Added `name` and `shortName` fields to the manual-tool inventory.
-- `name` is the full cutter description shown in the composer UI; `shortName` is reserved for MASSO operator messages and is limited to 14 characters.
-- When the next operation uses a manual tool and dust-shoe pauses are enabled, the shoe-off message identifies the upcoming manual tool, for example `MSG Shoe off; Next T10: 90° V`.
+- `name` is the full cutter description shown in the composer UI; `shortName` is reserved for MASSO operator messages and is limited to 10 characters.
+- When a tool-change transition is about to acquire a manual tool (after the first operation), the shoe-off message identifies that tool, for example `MSG Shoe off; Next T10: 90° V`.
 - Removed the separate pre-RapidChange manual-tool advance message. RapidChange macro files remain unchanged and continue to own the actual manual unload/load/measurement sequence.
-
-## v0.5.13 update
 
 - Added `config/manual-tools.json` as a small working inventory/catalog for manual tools T9/T10.
 - Added seven starter cutters using `toolId`, `shaftDiameter`, `cuttingSize`, `type`, and `note`; V-bit cutting size is represented as `null`.
