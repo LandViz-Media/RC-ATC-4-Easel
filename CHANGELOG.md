@@ -1,5 +1,14 @@
 # Change Log — Easel → MASSO RapidChange ATC Job Composer
 
+## v0.5.13 — Manual-tool shoe-off guidance and short names
+
+- Added `name` and `shortName` to the manual-tool catalog.
+- Full `name` is used in the composer UI; `shortName` is limited to 14 characters for MASSO messages.
+- Replaced the separate v0.5.12 manual-to-manual advance pause with next-manual-tool guidance in the existing shoe-off message.
+- Example: `MSG Shoe off; Next T10: 90° V`.
+- No RapidChange macro (`RC`) files were modified.
+
+
 ## v0.5.12 — Manual-to-manual advance guidance
 
 - Added composer-side advance guidance when one manual tool is followed by a different manual tool.

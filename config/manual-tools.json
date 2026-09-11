@@ -1,11 +1,11 @@
 {
   "tools": [
-    {"toolId":"BIT-001","shaftDiameter":0.125,"cuttingSize":0.125,"type":"DC","note":""},
-    {"toolId":"BIT-002","shaftDiameter":0.125,"cuttingSize":0.125,"type":"UC","note":""},
-    {"toolId":"BIT-003","shaftDiameter":0.25,"cuttingSize":null,"type":"V-Bit","note":"60°"},
-    {"toolId":"BIT-004","shaftDiameter":0.25,"cuttingSize":null,"type":"V-Bit","note":"90°"},
-    {"toolId":"BIT-005","shaftDiameter":0.25,"cuttingSize":0.0625,"type":"DC","note":""},
-    {"toolId":"BIT-006","shaftDiameter":0.25,"cuttingSize":0.125,"type":"DC","note":"Long Reach"},
-    {"toolId":"BIT-007","shaftDiameter":0.25,"cuttingSize":0.125,"type":"UC","note":"Long Reach"}
+    {"toolId":"BIT-001","name":"1/8 inch Down Cut","shortName":"1/8 DC","shaftDiameter":0.125,"cuttingSize":0.125,"type":"DC","note":""},
+    {"toolId":"BIT-002","name":"1/8 inch Up Cut","shortName":"1/8 UC","shaftDiameter":0.125,"cuttingSize":0.125,"type":"UC","note":""},
+    {"toolId":"BIT-003","name":"1/4 inch 60 degree V-Bit","shortName":"60° V","shaftDiameter":0.25,"cuttingSize":null,"type":"V-Bit","note":"60°"},
+    {"toolId":"BIT-004","name":"1/4 inch 90 degree V-Bit","shortName":"90° V","shaftDiameter":0.25,"cuttingSize":null,"type":"V-Bit","note":"90°"},
+    {"toolId":"BIT-005","name":"1/4 inch 1/16 inch Down Cut","shortName":"1/4 DC 1/16","shaftDiameter":0.25,"cuttingSize":0.0625,"type":"DC","note":""},
+    {"toolId":"BIT-006","name":"1/4 inch 1/8 inch Down Cut Long Reach","shortName":"1/4 DC 1/8 LR","shaftDiameter":0.25,"cuttingSize":0.125,"type":"DC","note":"Long Reach"},
+    {"toolId":"BIT-007","name":"1/4 inch 1/8 inch Up Cut Long Reach","shortName":"1/4 UC 1/8 LR","shaftDiameter":0.25,"cuttingSize":0.125,"type":"UC","note":"Long Reach"}
   ]
 }

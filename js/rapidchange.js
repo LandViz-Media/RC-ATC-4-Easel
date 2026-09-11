@@ -33,7 +33,7 @@ function installShoeMessage(pathName){
   return prefix+shown;
 }
 
-function transitionStart(t,info,s){
+function transitionStart(t,info,s,nextInfo=null,nextManual=null){
   const px=Number(s.parkX).toFixed(3);
   const py=Number(s.parkY).toFixed(3);
   const pz=Number(s.parkZ).toFixed(3);
@@ -46,10 +46,14 @@ function transitionStart(t,info,s){
     `G53 G90 G0 X${px} Y${py}`
   ];
   if(s.dustShoeEnabled){
-    a.push(
-      "MSG Remove shoe; Cycle Start",
-      "M0"
-    );
+    let message="MSG Shoe off; Start";
+    if(nextInfo && !nextInfo.automatic && nextManual){
+      const shortName=String(nextManual.shortName||"").trim();
+      if(shortName && shortName.length<=14){
+        message=`MSG Shoe off; Next T${nextInfo.number}: ${shortName}`;
+      }
+    }
+    a.push(message,"M0");
   }
   return a;
 }
@@ -72,8 +76,8 @@ function transitionEnd(s,pathName){
   return a;
 }
 
-export function toolChangeBlock(t,s,info,pathName){
-  const a=transitionStart(t,info,s);
+export function toolChangeBlock(t,s,info,pathName,nextInfo=null,nextManual=null){
+  const a=transitionStart(t,info,s,nextInfo,nextManual);
   a.push(
     // RapidChange owns unloading/loading, setter positioning, Auto Tool Zero,
     // and T# M6. Do not duplicate any of that logic here.
@@ -84,28 +88,11 @@ export function toolChangeBlock(t,s,info,pathName){
   return a.join("\n");
 }
 
-function manualAdvanceMessage(currentTool,nextTool,nextManual){
-  if(!nextTool||!nextManual) return null;
-
-  // Advance guidance only. RapidChange still owns the actual manual unload/load
-  // pause, manual position, setter, measurement, and T# M6 sequence.
-  // Keep the operator message within MASSO's documented 34-character limit.
-  const note=String(nextManual.note||"").replace(/\s*°\s*/g,"°");
-  const detail=note ? ` ${note}` : "";
-  const full=`MSG After T${currentTool}: Load T${nextTool}${detail}; Start`;
-  if(full.length<=34) return full;
-  return `MSG After T${currentTool}: Load T${nextTool}; Start`;
-}
-
 export function manualToolBlock(t,s,info,pathName,manual=null,nextInfo=null,nextManual=null){
-  const a=transitionStart(t,info,s);
+  const a=transitionStart(t,info,s,nextInfo,nextManual);
   a[0]="(===== RAPIDCHANGE MANUAL TOOL CHANGE =====)";
   a[1]=`(Acquire Manual Tool ${t}: ${manual?.toolId||"unknown"}${manual?`: ${manual.type}${manual.note?` - ${manual.note}`:""}`:""})`;
 
-  const advance=manualAdvanceMessage(t,nextInfo?.number,nextManual);
-  if(advance){
-    a.push(advance,"M0");
-  }
 
   a.push(
     // RapidChange owns the manual-tool prompt, manual position, pocket-state

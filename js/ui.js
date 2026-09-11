@@ -9,6 +9,7 @@ function formatFraction(value){
 
 export function manualToolName(t){
   if(!t) return "";
+  if(String(t.name||"").trim()) return String(t.name).trim();
   const shaft=formatFraction(t.shaftDiameter);
   const size=t.cuttingSize===null?"":formatFraction(t.cuttingSize);
   const core=t.type==="V-Bit"?`${shaft} V-Bit`:size?`${shaft} ${size} ${t.type}`:`${shaft} ${t.type}`;

@@ -23,7 +23,7 @@ export function buildJob(ops,s,tools,manualTools,meta={}){
 
   const out=[
     "(Easel -> MASSO RapidChange ATC Job Composer)",
-    "(Version 0.5.12)",
+    "(Version 0.5.13)",
     `(Generated: ${localTimestamp()} local computer time)`,
     `(Output file: ${(meta.fileName||"combined-masso-rapidchange").replace(/[()]/g,"")}.nc)`
   ];
@@ -50,6 +50,12 @@ export function buildJob(ops,s,tools,manualTools,meta={}){
     if(!info) throw Error(`Operation ${i+1} has invalid tool ${op.tool}.`);
     const manual=getManual(op.manualToolId||"BIT-001");
     if(!info.automatic&&!manual) throw Error(`Operation ${i+1} has invalid manual tool ${op.manualToolId||"(none)"}.`);
+    if(!info.automatic){
+      const shortName=String(manual.shortName||"").trim();
+      if(!shortName) throw Error(`Manual tool ${manual.toolId} is missing shortName.`);
+      if(shortName.length>14) throw Error(`Manual tool ${manual.toolId} shortName must be 14 characters or fewer.`);
+      if(!String(manual.name||"").trim()) throw Error(`Manual tool ${manual.toolId} is missing name.`);
+    }
 
     const nextOp=ops[i+1];
     const nextTool=nextOp?Number(nextOp.tool):null;
@@ -64,7 +70,7 @@ export function buildJob(ops,s,tools,manualTools,meta={}){
     );
 
     if(previous!==tool){
-      out.push(info.automatic?toolChangeBlock(tool,s,info,op.fileName):manualToolBlock(tool,s,info,op.fileName,manual,nextInfo,nextManual));
+      out.push(info.automatic?toolChangeBlock(tool,s,info,op.fileName,nextInfo,nextManual):manualToolBlock(tool,s,info,op.fileName,manual,nextInfo,nextManual));
     }else{
       out.push("(Tool already in spindle - no tool change)");
     }
